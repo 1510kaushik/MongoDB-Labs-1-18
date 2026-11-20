@@ -1,0 +1,63 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+*.key
+*.pem
+*.csr
+*.srl
+keyfile
+
+# Generated / large data
+**/backups/
+**/Lab14.2_Backup_Recovery/backups/
+*.bson
+
+# Python / tooling
+.venv/
+__pycache__/
+.pytest_cache/
+*.log
+
+# Editor backups left by lab iterations
+*.backup
+*.before_lab*
+*.lab9-backup
+*.damaged-backup
+
+# All Python virtual environments
+.venv/
+.venv*/
+venv/
+venv*/
+
+# Database backups and dumps
+backups/
+**/backups/
+*.bson
+*.dump
+
+# Private certificates and credentials
+.env
+.env.*
+*.key
+*.pem
+
+# Additional virtual environments
+.venv*/
+venv/
+venv*/
+env/
+env*/
+
+# Database backups and dumps
+backups/
+**/backups/
+*.bson
+*.dump
+
+# Additional private certificate formats
+*.p12
+*.pfx

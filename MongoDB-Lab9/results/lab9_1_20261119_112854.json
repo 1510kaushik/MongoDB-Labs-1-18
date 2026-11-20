@@ -1,0 +1,34 @@
+{
+    "lab": "9.1",
+    "title": "Measure Write Concern Latency",
+    "timestamp": "2026-11-19T05:58:54.893919+00:00",
+    "replica_set": "rs0",
+    "voting_data_members": 3,
+    "document_count": 1000,
+    "results": {
+        "w:1": {
+            "documents": 1000,
+            "total_time_seconds": 2.813751,
+            "average_latency_ms": 2.813751,
+            "minimum_latency_ms": 1.9035,
+            "maximum_latency_ms": 47.3327,
+            "write_concern": 1
+        },
+        "w:majority": {
+            "documents": 1000,
+            "total_time_seconds": 6.113819,
+            "average_latency_ms": 6.113819,
+            "minimum_latency_ms": 4.6206,
+            "maximum_latency_ms": 45.899,
+            "write_concern": "majority"
+        },
+        "w:all": {
+            "documents": 1000,
+            "total_time_seconds": 4.142302,
+            "average_latency_ms": 4.142302,
+            "minimum_latency_ms": 3.4105,
+            "maximum_latency_ms": 45.7177,
+            "write_concern": 3
+        }
+    }
+}

@@ -1,0 +1,8 @@
+pymongo>=4.7
+voyageai
+anthropic
+python-dotenv
+sentence-transformers
+datasets
+numpy
+matplotlib

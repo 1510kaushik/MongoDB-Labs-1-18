@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoSQL Labs Portfolio</title>
+<meta name="description" content="Portfolio of MongoDB, Cassandra, Neo4j and RAG labs (Labs 7–18) and a Cyber Threat Intelligence platform.">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#14181f;--mute:#5b6472;--line:#e3e6ee;--accent:#0a8f5b;--accent2:#3b5bdb;--chip:#eef1f8;--bar:#3b5bdb;--bar2:#0a8f5b;--code:#f0f2f7}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--card:#171b22;--ink:#e8ebf1;--mute:#9aa3b2;--line:#262c37;--accent:#2dd48f;--accent2:#7b93ff;--chip:#202633;--bar:#7b93ff;--bar2:#2dd48f;--code:#11151b}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--accent2)}
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+nav{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:10px 0;white-space:nowrap}
+nav b{margin-right:10px}nav a{text-decoration:none;color:var(--mute);padding:4px 10px;border-radius:99px;font-size:14px}nav a:hover{background:var(--chip);color:var(--ink)}
+.hero{padding:56px 0 28px}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:0 0 12px}
+.hero p{max-width:720px;color:var(--mute);font-size:18px;margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:28px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}.stat b{display:block;font-size:26px}.stat span{color:var(--mute);font-size:13px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+.filters button{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;border-radius:99px;cursor:pointer;font:inherit;font-size:14px}
+.filters button.on{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;transition:.15s}
+.card:hover{transform:translateY(-2px);border-color:var(--accent2)}
+.card small{color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:12px}
+.card h3{margin:0;font-size:18px}.card p{margin:0;color:var(--mute);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.tag{background:var(--chip);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mute)}
+section.proj{padding:40px 0;border-top:1px solid var(--line)}
+section.proj h2{margin:0 0 4px;font-size:28px}section.proj .sub{color:var(--mute);margin:0 0 18px}
+h4{margin:22px 0 8px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}th{color:var(--mute);font-weight:600}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+ul{padding-left:20px;margin:6px 0}li{margin:3px 0}
+code,pre{background:var(--code);border-radius:6px;font:13px ui-monospace,Consolas,monospace}code{padding:1px 5px}pre{padding:12px;overflow-x:auto}
+.bars{display:grid;gap:8px}.bar{display:grid;grid-template-columns:150px 1fr 70px;gap:10px;align-items:center;font-size:13px}
+.bar i{display:block;height:14px;border-radius:4px;background:var(--bar)}.bar i.b2{background:var(--bar2)}
+.bar span.v{text-align:right;font-variant-numeric:tabular-nums;color:var(--mute)}
+@media(max-width:520px){.bar{grid-template-columns:100px 1fr 56px}}
+.note{border-left:3px solid var(--accent);padding:6px 12px;color:var(--mute);background:var(--card);border-radius:0 8px 8px 0;margin:12px 0;font-size:14px}
+.pass{color:var(--accent);font-weight:600}
+img{max-width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--accent2);color:#fff;padding:8px 12px;border-radius:8px;z-index:20}.skip:focus{left:8px}
+.totop{position:fixed;right:16px;bottom:16px;background:var(--accent2);color:#fff;border-radius:99px;padding:8px 14px;text-decoration:none;font-size:14px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
+@media print{header.top,.filters,.totop{display:none}.card,.box{break-inside:avoid}}
+footer{padding:36px 0;color:var(--mute);border-top:1px solid var(--line);font-size:14px}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<a class="skip" href="#projects">Skip to projects</a><a class="totop" href="#top" aria-label="Back to top">↑ Top</a>
+<header class="top" id="top"><div class="wrap"><nav aria-label="Sections">
+<b>NoSQL Labs</b><a href="#projects">Projects</a><a href="#cti">CTI</a><a href="#lab8">L8</a><a href="#lab9">L9</a><a href="#lab10">L10</a><a href="#lab11">L11</a><a href="#lab12">L12</a><a href="#lab13">L13</a><a href="#lab14">L14</a><a href="#lab15">L15</a><a href="#lab16">L16</a><a href="#lab17">L17</a><a href="#lab18">L18</a>
+</nav></div></header>
+
+<main class="wrap">
+<div class="hero">
+<h1>NoSQL Labs Portfolio</h1>
+<p>Twelve hands-on projects covering MongoDB schema design, replication, transactions, sharding, security, monitoring, backup &amp; recovery, multi-tenancy, polyglot persistence, vector search/RAG and a three-database comparison, anchored by a Cyber Threat Intelligence platform.</p>
+<div class="stats">
+<div class="stat"><b>12</b><span>projects</span></div>
+<div class="stat"><b>Python</b><span>Flask, FastAPI, PyMongo</span></div>
+<div class="stat"><b>3 DBs</b><span>MongoDB, Cassandra, Neo4j</span></div>
+<div class="stat"><b>100k</b><span>docs in largest benchmarks</span></div>
+<div class="stat"><b>Docker</b><span>&amp; Kubernetes deployments</span></div>
+</div></div>
+
+<h2 id="projects">All projects</h2>
+<div class="filters" id="filters"></div>
+<div class="grid" id="grid"></div>
+
+<!-- CTI -->
+<section class="proj" id="cti">
+<h2>Cyber Threat Intelligence Platform</h2>
+<p class="sub">Labs 7.1 &amp; 7.2 · Flask + MongoDB + vanilla JS dashboard</p>
+<p>A dashboard over real CISA Known Exploited Vulnerabilities (KEV) data plus an index of annual security reports, with schema analysis, a 100,000-document working-set test and WiredTiger cache monitoring. Later labs (9–15) were integrated into this same app as blueprints (<code>lab9</code>, <code>lab10</code>, <code>lab12</code>, <code>lab13</code>, <code>lab14_1</code>, <code>lab15</code>).</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">Architecture</h4><ul>
+<li><b>Backend:</b> Flask <code>app.py</code>, ingesters <code>ingest_cisa.py</code>, <code>ingest_reports.py</code></li>
+<li><b>Frontend:</b> <code>index.html</code>, <code>app.js</code>, <code>style.css</code></li>
+<li><b>Tools:</b> schema_analysis, working_set_test, cache_monitor, random_reads, backup_cti</li>
+<li><b>Packaging:</b> Dockerfile, index script, env example</li></ul>
+<h4>API</h4><pre>GET  /api/health
+GET  /api/threats?q=&amp;category=&amp;page=&amp;limit=
+GET  /api/threats/&lt;CVE-ID&gt;
+GET  /api/reports?q=
+GET  /api/metrics/schema | /cache
+POST /api/sync/cisa | /api/sync/reports</pre></div>
+<div class="box"><h4 style="margin-top:0">Lab 7.1 — BSON size by collection</h4>
+<table><tr><th>Collection</th><th class="n">Docs</th><th class="n">Avg B</th><th class="n">Max B</th></tr>
+<tr><td>threats</td><td class="n">1,746</td><td class="n">1,180</td><td class="n">2,682</td></tr>
+<tr><td>reports</td><td class="n">564</td><td class="n">351</td><td class="n">454</td></tr>
+<tr><td>sources</td><td class="n">2</td><td class="n">311</td><td class="n">312</td></tr></table>
+<p style="font-size:13px;color:var(--mute)">No document is anywhere near the 16 MiB limit.</p>
+<h4>Embedding vs referencing (500 iterations)</h4>
+<div class="bars">
+<div class="bar"><span>Referencing</span><i style="width:100%"></i><span class="v">0.969 ms</span></div>
+<div class="bar"><span>Embedding</span><i class="b2" style="width:59%"></i><span class="v">0.571 ms</span></div></div>
+<p style="font-size:13px;color:var(--mute)">Embedding reads ~41% faster but the document grows (2,316 vs 2,036 bytes) and publisher updates get harder.</p></div>
+<div class="box"><h4 style="margin-top:0">Lab 7.2 — Working set</h4><ul>
+<li>100,000 synthetic ~2 KB docs, kept separate from real data</li>
+<li>Max WiredTiger cache ≈ 12.2 GB, in use ≈ 230 MB → <b>1.89%</b> utilisation</li>
+<li>Estimated interval hit ratio: <b>1.0</b> (estimate from counter deltas)</li></ul>
+<div class="note">Data-integrity stance: CVE records come only from the live CISA feed; KEV membership is never presented as a severity score.</div></div>
+</div></section>
+
+<!-- Lab 8 -->
+<section class="proj" id="lab8">
+<h2>Lab 8 — Replica Set with Arbiter</h2><p class="sub">MongoDB 7.0 · Docker Compose</p>
+<div class="cols"><div class="box"><ul>
+<li>Three data-bearing members (ports 27017–27019) plus one arbiter, replica set <code>rs0</code></li>
+<li>Scripts: <code>import_cti_to_lab8.py</code> loads CTI data; <code>lab8_2_monitor.py</code> reports member roles</li></ul></div>
+<div class="box"><h4 style="margin-top:0">Evidence captured</h4><pre>mongo1 : PRIMARY
+mongo2 : SECONDARY
+mongo3 : SECONDARY
+arbiter: ARBITER</pre><p style="font-size:13px;color:var(--mute)">Replication test document written and verified; failover and monitoring tests saved under <code>evidence/</code>.</p></div></div></section>
+
+<!-- Lab 9 -->
+<section class="proj" id="lab9">
+<h2>Lab 9 — Write Concern Latency</h2><p class="sub">PyMongo 4.17 · replica set rs0 · 1,000 individual inserts per setting</p>
+<div class="cols"><div class="box"><div class="bars">
+<div class="bar"><span>w:1</span><i style="width:46%"></i><span class="v">2.81 ms</span></div>
+<div class="bar"><span>w:3 (all voting)</span><i style="width:68%"></i><span class="v">4.14 ms</span></div>
+<div class="bar"><span>w:majority</span><i style="width:100%"></i><span class="v">6.11 ms</span></div></div></div>
+<div class="box"><ul><li>MongoDB has no literal <code>w:all</code>; <code>w:3</code> is used, excluding the arbiter.</li><li>Stronger acknowledgement costs more latency; results vary with hardware and load.</li><li>Delivered as a benchmark service, Flask routes and timestamped JSON reports.</li></ul></div></div></section>
+
+<!-- Lab 10 -->
+<section class="proj" id="lab10">
+<h2>Lab 10 — Multi-Document Transactions</h2><p class="sub">Bank transfer and inventory reservation</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">10.1 Bank transfer — <span class="pass">3/3 PASS</span></h4><ul><li>Successful transfer ACC001 → ACC002 (100)</li><li>Insufficient funds rolls back</li><li>Forced rollback after debit leaves balances intact</li></ul></div>
+<div class="box"><h4 style="margin-top:0">10.2 Inventory — <span class="pass">4/4 PASS</span></h4><p style="font-size:14px;margin:0 0 8px">100 reservation requests, stock 5 protected under 8 concurrent clients. Throughput (req/s):</p>
+<table><tr><th>Threads</th><th class="n">Transactional</th><th class="n">Atomic update</th></tr>
+<tr><td>1</td><td class="n">121</td><td class="n">187</td></tr><tr><td>4</td><td class="n">102</td><td class="n">514</td></tr><tr><td>8</td><td class="n">91</td><td class="n">751</td></tr><tr><td>16</td><td class="n">87</td><td class="n">749</td></tr></table>
+<p style="font-size:13px;color:var(--mute)">Transactions slow down under contention; single-document atomic operators scale up.</p></div></div></section>
+
+<!-- Lab 11 -->
+<section class="proj" id="lab11">
+<h2>Lab 11 — Sharded Cluster &amp; Hotspot Detection</h2><p class="sub">Config server + 2 shards + mongos</p>
+<div class="cols"><div class="box"><h4 style="margin-top:0">10,000 documents, two shard keys</h4>
+<table><tr><th>Shard key</th><th class="n">shard1</th><th class="n">shard2</th></tr><tr><td>Timestamp (hotspot)</td><td class="n">0</td><td class="n">10,000</td></tr><tr><td>Hashed (even)</td><td class="n">5,081</td><td class="n">4,919</td></tr></table></div>
+<div class="box"><ul><li>A monotonically increasing key sends every insert to one shard.</li><li>A hashed key balances writes ~51/49.</li><li>Trade-off: timestamp range query targeted a single shard (7 ms); hashed keys scatter range queries.</li></ul></div></div></section>
+
+<!-- Lab 12 -->
+<section class="proj" id="lab12">
+<h2>Lab 12 — TLS &amp; Role-Based Access Control</h2><p class="sub">MongoDB with requireTLS, client certificates and least-privilege users</p>
+<div class="cols"><div class="box"><ul><li>Private CA, server and client certificates generated with OpenSSL</li><li><code>mongod --auth --tlsMode requireTLS</code>, bound to localhost</li><li><code>setup_lab12_rbac.py</code> creates reader and writer roles</li></ul></div>
+<div class="box"><h4 style="margin-top:0">Verification scripts</h4><ul><li><code>test_tls.py</code> — TLS handshake</li><li><code>test_no_client_cert.py</code> — connection without cert is rejected</li><li><code>test_reader_writer.py</code> — reader only sees the salary-free <code>employees_safe</code> view and cannot access the base collection or delete</li></ul></div></div>
+<div class="note">Private keys and passwords stay out of this site by design.</div></section>
+
+<!-- Lab 13 -->
+<section class="proj" id="lab13">
+<h2>Lab 13 — Monitoring &amp; Kubernetes</h2><p class="sub">Docker Compose and StatefulSet deployments</p>
+<div class="cols"><div class="box"><h4 style="margin-top:0">Docker stack</h4><ul><li>3-node replica set with keyFile auth</li><li>Keyfile init container</li><li>Percona <code>mongodb_exporter</code> 0.47.2</li><li>Prometheus v3.5.0, 15 s scrape</li></ul></div>
+<div class="box"><h4 style="margin-top:0">Kubernetes</h4><ul><li><code>mongo-statefulset.yaml</code>: 3 replicas, init container for keyfile</li><li><code>mongo-headless.yaml</code>: headless service for stable DNS</li><li>Namespace <code>lab13</code></li></ul></div></div></section>
+
+<!-- Lab 14 -->
+<section class="proj" id="lab14">
+<h2>Lab 14 — Monitoring Service &amp; Backup / Recovery</h2><p class="sub">14.1 Flask monitoring · 14.2 mongodump/mongorestore</p>
+<div class="cols"><div class="box"><h4 style="margin-top:0">14.2 Backup and restore benchmark</h4>
+<table><tr><th>Docs</th><th class="n">Backup s</th><th class="n">Restore s</th><th class="n">Size</th></tr>
+<tr><td>1,000</td><td class="n">0.09</td><td class="n">0.16</td><td class="n">466 KB</td></tr><tr><td>10,000</td><td class="n">0.20</td><td class="n">0.88</td><td class="n">4.6 MB</td></tr><tr><td>100,000</td><td class="n">1.53</td><td class="n">8.24</td><td class="n">45.9 MB</td></tr></table></div>
+<div class="box"><ul><li>Hourly backup PowerShell script with log (RPO target 60 min)</li><li>Measured components of recovery ≈ 3 s; end-to-end RTO not formally verified</li><li>14.1 adds a cache hit-ratio monitor, routes and a dashboard tab to the CTI app</li></ul></div></div></section>
+
+<!-- Lab 15 -->
+<section class="proj" id="lab15">
+<h2>Lab 15 — Multi-Tenancy</h2><p class="sub">15.1 FastAPI tenant API · 15.2 isolation-strategy migration</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">15.1 Multi-tenant task API</h4><ul><li>FastAPI, JWT, Argon2, pytest — <span class="pass">4 passed</span></li><li>All queries scoped by <code>tenant_id</code>; cross-tenant access returns 404</li><li>Rate limit: 100 req / 60 s per tenant in MongoDB with a TTL index; request 101 → 429</li></ul>
+<pre>POST /auth/register  /auth/login   GET /auth/me
+POST/GET /tasks   GET/PUT/DELETE /tasks/{id}</pre></div>
+<div class="box"><h4 style="margin-top:0">15.2 Document-level vs collection-per-tenant</h4>
+<p style="font-size:13px;color:var(--mute);margin:0 0 8px">5 tenants · 500 tasks · average ms</p>
+<table><tr><th>Operation</th><th class="n">Doc-level</th><th class="n">Per-tenant</th></tr><tr><td>List tasks</td><td class="n">3.26</td><td class="n">2.87</td></tr><tr><td>Create task</td><td class="n">3.30</td><td class="n">3.20</td></tr><tr><td>Cross-tenant analytics</td><td class="n">3.42</td><td class="n">11.65</td></tr></table>
+<p style="font-size:13px;color:var(--mute)">Migration via <code>$match</code>+<code>$out</code>: 500/500 documents, zero leakage. Recommendation: start document-level; split by tenant when backup, restore or regulation requires it.</p></div></div></section>
+
+<!-- Lab 16 -->
+<section class="proj" id="lab16">
+<h2>Lab 16 — Three Database Models &amp; FraudQueryService</h2><p class="sub">MongoDB · Cassandra · Neo4j</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">16.1 University enrolment</h4><p style="font-size:14px">Same domain modelled three ways: embedded roster documents, query-first Cassandra tables (written twice), and a Student-ENROLLED_IN-Course graph, with equivalent queries compared side by side.</p></div>
+<div class="box"><h4 style="margin-top:0">16.2 FraudQueryService</h4><table>
+<tr><th>Method</th><th>Backend</th></tr><tr><td>get_transaction</td><td>MongoDB</td></tr><tr><td>get_user_profile</td><td>Cassandra</td></tr><tr><td>detect_fraud_rings</td><td>Neo4j</td></tr><tr><td>analyze_transaction</td><td>all three</td></tr></table>
+<p style="font-size:13px;color:var(--mute)">Connection pooling and a per-backend circuit breaker (3 failures → open, 30 s retry). Unit tests run without live databases.</p></div></div></section>
+
+<!-- Lab 17 -->
+<section class="proj" id="lab17">
+<h2>Lab 17 — RAG &amp; Vector Index Comparison</h2><p class="sub">Atlas Vector Search · Voyage embeddings · Claude</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">17.1 RAG with memory</h4><ul><li>Threat-intel docs → 100-word chunks (20 overlap) → embeddings → <code>$vectorSearch</code> top 3</li><li>Conversation memory: last 5 exchanges per user</li></ul></div>
+<div class="box"><h4 style="margin-top:0">17.2 Index benchmark (measured)</h4>
+<table><tr><th>Index</th><th>Params</th><th class="n">Build s</th><th class="n">ms</th><th class="n">Recall</th></tr>
+<tr><td>HNSW</td><td>efC 100</td><td class="n">7.7</td><td class="n">33.8</td><td class="n">100%</td></tr><tr><td>HNSW</td><td>efC 128</td><td class="n">5.2</td><td class="n">15.1</td><td class="n">100%</td></tr><tr><td>HNSW</td><td>efC 256</td><td class="n">4.2</td><td class="n">18.1</td><td class="n">100%</td></tr><tr><td>HNSW</td><td>efC 512</td><td class="n">6.4</td><td class="n">12.1</td><td class="n">100%</td></tr><tr><td>FLAT</td><td>exact</td><td class="n">3.1</td><td class="n">12.4</td><td class="n">100%</td></tr></table></div></div>
+<h4>Latency vs recall chart</h4><img src="assets/latency_recall.png" alt="Latency versus recall chart for HNSW and flat indexes" loading="lazy"></section>
+
+<!-- Lab 18 -->
+<section class="proj" id="lab18">
+<h2>Lab 18 — MongoDB vs Cassandra vs Neo4j</h2><p class="sub">100,000 synthetic threat events · single-node Docker · median of 10 runs</p>
+<div class="cols">
+<div class="box"><h4 style="margin-top:0">Query latency (ms, lower is better)</h4>
+<table><tr><th>Query</th><th class="n">Mongo</th><th class="n">Cass.</th><th class="n">Neo4j</th></tr>
+<tr><td>Q1 indicator history</td><td class="n pass">1.94</td><td class="n">4.29</td><td class="n">15.71</td></tr>
+<tr><td>Q2 target &amp; spread</td><td class="n pass">6.72</td><td class="n">24.76</td><td class="n">14.11</td></tr>
+<tr><td>Q3 daily volume</td><td class="n">44.17</td><td class="n pass">18.25</td><td class="n">76.97</td></tr>
+<tr><td>Q4 insert 1,000</td><td class="n pass">31.6</td><td class="n">1102*</td><td class="n">123.7</td></tr></table>
+<p style="font-size:12px;color:var(--mute)">*Pure-Python Cassandra driver, single node — not its real ceiling.</p></div>
+<div class="box"><h4 style="margin-top:0">Activity 18.1 — community detection</h4><ul><li>Neo4j GDS Louvain over a co-targeting graph (19,503 edges)</li><li><b>25/25</b> planted campaigns recovered, purity 1.0</li><li>Flagged communities: average transaction ≈ $630–712 vs $329.52 overall (pulled from MongoDB)</li></ul></div></div>
+<div class="note"><b>Recommendation:</b> MongoDB as system of record, Neo4j as a derived graph for campaign analysis, Cassandra only when ingest scale or multi-region writes justify it. The report includes scalability estimates for 1M–100M events, operations comparison and ergonomics.</div></section>
+</main>
+
+<footer><div class="wrap">Generated from the project folders in <code>7-18</code>. Figures are taken from each lab's saved results and READMEs; the estimates and "expected" values noted in the source READMEs are not presented as measurements.</div></footer>
+
+<script>
+const projects=[
+{id:"cti",t:"Cyber Threat Intelligence Platform",l:"Labs 7.1 & 7.2",c:"App",d:"Flask + MongoDB dashboard over live CISA KEV data, schema analysis and cache monitoring.",g:["Flask","MongoDB","CISA KEV"]},
+{id:"lab8",t:"Replica Set with Arbiter",l:"Lab 8",c:"Infrastructure",d:"Four-container rs0 with failover and replication evidence.",g:["Docker","Replication"]},
+{id:"lab9",t:"Write Concern Latency",l:"Lab 9",c:"Performance",d:"w:1 vs majority vs w:3 across 1,000 inserts.",g:["PyMongo","Benchmark"]},
+{id:"lab10",t:"Multi-Document Transactions",l:"Lab 10",c:"Transactions",d:"Bank transfer rollback and concurrent inventory reservation.",g:["ACID","Concurrency"]},
+{id:"lab11",t:"Sharding & Hotspots",l:"Lab 11",c:"Infrastructure",d:"Timestamp vs hashed shard keys on a 2-shard cluster.",g:["Sharding","mongos"]},
+{id:"lab12",t:"TLS & RBAC",l:"Lab 12",c:"Security",d:"Mutual TLS, private CA, reader/writer roles.",g:["TLS","OpenSSL","RBAC"]},
+{id:"lab13",t:"Monitoring & Kubernetes",l:"Lab 13",c:"Infrastructure",d:"Prometheus + exporter stack and a StatefulSet replica set.",g:["Prometheus","K8s"]},
+{id:"lab14",t:"Monitoring & Backup/Recovery",l:"Lab 14",c:"Operations",d:"Cache monitor plus backup and restore benchmarks up to 100k docs.",g:["mongodump","PowerShell"]},
+{id:"lab15",t:"Multi-Tenancy",l:"Lab 15",c:"App",d:"Tenant-isolated FastAPI service and isolation-strategy migration.",g:["FastAPI","JWT","Migration"]},
+{id:"lab16",t:"Three Models & FraudQueryService",l:"Lab 16",c:"Polyglot",d:"One domain in three databases; a unified fraud service with circuit breakers.",g:["Cassandra","Neo4j"]},
+{id:"lab17",t:"RAG & Vector Indexes",l:"Lab 17",c:"AI",d:"RAG chat with memory and HNSW/FLAT benchmarking on Atlas.",g:["Vector Search","Claude"]},
+{id:"lab18",t:"Database Comparison",l:"Lab 18",c:"Polyglot",d:"Benchmarks and Louvain community detection on 100k threat events.",g:["Neo4j GDS","Benchmark"]}];
+const cats=["All",...new Set(projects.map(p=>p.c))];
+const f=document.getElementById("filters"),g=document.getElementById("grid");
+function draw(cat){g.innerHTML=projects.filter(p=>cat==="All"||p.c===cat).map(p=>`<a class="card" href="#${p.id}"><small>${p.l} · ${p.c}</small><h3>${p.t}</h3><p>${p.d}</p><div class="tags">${p.g.map(x=>`<span class="tag">${x}</span>`).join("")}</div></a>`).join("");
+f.innerHTML=cats.map(c=>`<button aria-pressed="${c===cat}" class="${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("")}
+f.onclick=e=>{if(e.target.dataset.c)draw(e.target.dataset.c)};draw("All");
+</script>
+</body>
+</html>

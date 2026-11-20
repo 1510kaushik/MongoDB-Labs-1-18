@@ -1,0 +1,254 @@
+{
+  "lab": "10.1",
+  "title": "Bank Transfer Transaction",
+  "timestamp": "2026-11-19T10:04:22.264956+00:00",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Create accounts collection + insert two accounts",
+      "accounts": [
+        {
+          "account_id": "A1001",
+          "owner": "Alice",
+          "balance": 1000,
+          "version": 1
+        },
+        {
+          "account_id": "A1002",
+          "owner": "Bob",
+          "balance": 500,
+          "version": 1
+        }
+      ],
+      "status": "success"
+    },
+    {
+      "step": 2,
+      "title": "Successful transfer of 200 (A1001 \u2192 A1002)",
+      "result": {
+        "transfer_id": "42150f48-845a-4fe7-9bad-fa695d4c3363",
+        "attempts": 1,
+        "retries": [],
+        "status": "success"
+      },
+      "balances": {
+        "A1001": 800,
+        "A1002": 700
+      },
+      "assertion": true,
+      "status": "success"
+    },
+    {
+      "step": 3,
+      "title": "Insufficient funds \u2013 transfer 5000 (must roll back)",
+      "before": {
+        "A1001": 800,
+        "A1002": 700
+      },
+      "after": {
+        "A1001": 800,
+        "A1002": 700
+      },
+      "error": "A1001 has 800, tried to transfer 5000",
+      "rollback_verified": true,
+      "status": "success"
+    },
+    {
+      "step": "3b",
+      "title": "Filter guard only \u2013 precheck OFF",
+      "error": "A1001 cannot cover 5000",
+      "balances": {
+        "A1001": 800,
+        "A1002": 700
+      },
+      "rollback_verified": true,
+      "status": "success"
+    },
+    {
+      "step": "3c",
+      "title": "Crash AFTER debit \u2013 proves transaction rollback",
+      "error": "Simulated crash after debit, before credit",
+      "balances": {
+        "A1001": 800,
+        "A1002": 700
+      },
+      "rollback_verified": true,
+      "status": "success"
+    },
+    {
+      "step": "activity",
+      "title": "10 concurrent transfers \u2192 write conflicts \u2192 exponential backoff",
+      "total_transfers": 10,
+      "attempts_per_transfer": [
+        1,
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        4,
+        4
+      ],
+      "final_balances": {
+        "A1001": 900,
+        "A1002": 600
+      },
+      "total_money_preserved": true,
+      "total_money": 1500,
+      "transfer_history_count": 10,
+      "retry_events": [
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 18), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 16)}",
+          "delay_s": 0.104
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 27), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 27)}",
+          "delay_s": 0.119
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 18), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 16)}",
+          "delay_s": 0.14
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 18), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 16)}",
+          "delay_s": 0.111
+        },
+        {
+          "attempt": 2,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 30), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 30)}",
+          "delay_s": 0.203
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 18), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 16)}",
+          "delay_s": 0.132
+        },
+        {
+          "attempt": 2,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 34), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 34)}",
+          "delay_s": 0.243
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 23), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 23)}",
+          "delay_s": 0.149
+        },
+        {
+          "attempt": 2,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 42), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 42)}",
+          "delay_s": 0.242
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 18), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 16)}",
+          "delay_s": 0.107
+        },
+        {
+          "attempt": 2,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 29), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 29)}",
+          "delay_s": 0.214
+        },
+        {
+          "attempt": 3,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 46), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 44)}",
+          "delay_s": 0.418
+        },
+        {
+          "attempt": 1,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 26), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 24)}",
+          "delay_s": 0.148
+        },
+        {
+          "attempt": 2,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 41), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 39)}",
+          "delay_s": 0.229
+        },
+        {
+          "attempt": 3,
+          "error": "Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction., full error: {'errorLabels': ['TransientTransactionError'], 'ok': 0.0, 'errmsg': 'Caused by :: Write conflict during plan execution and yielding is disabled. :: Please retry your operation or multi-document transaction.', 'code': 112, 'codeName': 'WriteConflict', '$clusterTime': {'clusterTime': Timestamp(1795082661, 50), 'signature': {'hash': b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'keyId': 0}}, 'operationTime': Timestamp(1795082661, 48)}",
+          "delay_s": 0.436
+        }
+      ],
+      "errors": [],
+      "status": "success"
+    }
+  ],
+  "transfer_history": [
+    {
+      "transfer_id": "65efb346-de5f-4243-92c5-24ff536c0129",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:22.253000"
+    },
+    {
+      "transfer_id": "6b4d19de-dd53-4124-af62-051ba0a5cf5c",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:22.171000"
+    },
+    {
+      "transfer_id": "c08cdf55-b1ab-4258-bb92-e0175ab018a1",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.816000"
+    },
+    {
+      "transfer_id": "cbfe749f-b70b-48bd-b4ba-2d29e2b8b428",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.794000"
+    },
+    {
+      "transfer_id": "dec4c531-8945-4e8a-8e83-14aef7e24698",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.729000"
+    },
+    {
+      "transfer_id": "33825446-b822-4a1b-bdbd-22b5497a3ff7",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.545000"
+    },
+    {
+      "transfer_id": "835b9295-b13e-474c-a237-a08683d2f86d",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.530000"
+    },
+    {
+      "transfer_id": "04cdf67f-bf71-4dd4-84c4-9c6f94049008",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.507000"
+    },
+    {
+      "transfer_id": "fcd3581f-c624-412e-b24f-7bbc6dbb3434",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.379000"
+    },
+    {
+      "transfer_id": "2432a025-2487-4a80-a65c-5d2b46905f0d",
+      "from": "A1001",
+      "to": "A1002",
+      "amount": 10,
+      "timestamp": "2026-11-19T10:04:21.344000"
+    }
+  ]
+}

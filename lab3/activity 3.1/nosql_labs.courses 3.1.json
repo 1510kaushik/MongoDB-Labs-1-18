@@ -1,0 +1,99 @@
+[{
+  "_id": {
+    "$oid": "6a9e81a44b93a8d9c2c0933d"
+  },
+  "title": "Database Management Systems",
+  "code": "CS401",
+  "instructor": "Dr. Priya Sharma",
+  "schedule": {
+    "days": [
+      "Monday",
+      "Wednesday"
+    ],
+    "times": "10:00-11:30",
+    "room": "LH-201"
+  },
+  "students": [
+    {
+      "name": "Arjun Mehta",
+      "id": "CS001",
+      "grade": "A"
+    },
+    {
+      "name": "Sneha Reddy",
+      "id": "CS002",
+      "grade": "B+"
+    },
+    {
+      "name": "Rahul Kumar",
+      "id": "CS003",
+      "grade": "A-"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a9e81a44b93a8d9c2c0933e"
+  },
+  "title": "Machine Learning",
+  "code": "AI301",
+  "instructor": "Dr. Anil Gupta",
+  "schedule": {
+    "days": [
+      "Tuesday",
+      "Thursday"
+    ],
+    "times": "14:00-15:30",
+    "room": "LH-305"
+  },
+  "students": [
+    {
+      "name": "Arjun Mehta",
+      "id": "CS001",
+      "grade": "A"
+    },
+    {
+      "name": "Kavya Nair",
+      "id": "CS004",
+      "grade": "A+"
+    },
+    {
+      "name": "Vikram Singh",
+      "id": "CS005",
+      "grade": "B+"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a9e81a44b93a8d9c2c0933f"
+  },
+  "title": "Computer Networks",
+  "code": "CS402",
+  "instructor": "Dr. Priya Sharma",
+  "schedule": {
+    "days": [
+      "Monday",
+      "Friday"
+    ],
+    "times": "09:00-10:00",
+    "room": "LH-102"
+  },
+  "students": [
+    {
+      "name": "Sneha Reddy",
+      "id": "CS002",
+      "grade": "A-"
+    },
+    {
+      "name": "Rahul Kumar",
+      "id": "CS003",
+      "grade": "B+"
+    },
+    {
+      "name": "Priya Das",
+      "id": "CS006",
+      "grade": "A"
+    }
+  ]
+}]

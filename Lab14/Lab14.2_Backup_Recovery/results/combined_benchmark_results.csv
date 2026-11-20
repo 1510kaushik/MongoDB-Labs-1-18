@@ -1,0 +1,4 @@
+"Dataset","Documents","BackupTimeSec","RestoreTimeSec","BackupSizeBytes","BackupExitCode","RestoreExitCode"
+"benchmark_1000","1000","0.0925","0.1646","476893","0","0"
+"benchmark_10000","10000","0.2034","0.8843","4788894","0","0"
+"benchmark_100000","100000","1.5277","8.2379","48088895","0","0"

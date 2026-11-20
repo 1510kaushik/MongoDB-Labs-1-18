@@ -1,0 +1,135 @@
+{
+  "size_estimate": {
+    "sample_comment_bytes": 203,
+    "projected_10000_comments_bytes": 2030000,
+    "bson_document_limit_bytes": 16777216,
+    "would_exceed_limit": false
+  },
+  "busy_posts": [
+    {
+      "_id": {
+        "$oid": "6a9eca42a9881f0bae8b02dc"
+      },
+      "title": "A Post With a Lot of Comments",
+      "author": "arjun",
+      "created": "2024-03-01",
+      "recent_comments": [
+        {
+          "author": "reader49",
+          "text": "Comment number 499"
+        },
+        {
+          "author": "reader48",
+          "text": "Comment number 498"
+        },
+        {
+          "author": "reader47",
+          "text": "Comment number 497"
+        }
+      ]
+    }
+  ],
+  "busy_post_comments_first_page": [
+    {
+      "seq": 0,
+      "author": "reader0",
+      "text": "Comment number 0"
+    },
+    {
+      "seq": 1,
+      "author": "reader1",
+      "text": "Comment number 1"
+    },
+    {
+      "seq": 2,
+      "author": "reader2",
+      "text": "Comment number 2"
+    },
+    {
+      "seq": 3,
+      "author": "reader3",
+      "text": "Comment number 3"
+    },
+    {
+      "seq": 4,
+      "author": "reader4",
+      "text": "Comment number 4"
+    },
+    {
+      "seq": 5,
+      "author": "reader5",
+      "text": "Comment number 5"
+    },
+    {
+      "seq": 6,
+      "author": "reader6",
+      "text": "Comment number 6"
+    },
+    {
+      "seq": 7,
+      "author": "reader7",
+      "text": "Comment number 7"
+    },
+    {
+      "seq": 8,
+      "author": "reader8",
+      "text": "Comment number 8"
+    },
+    {
+      "seq": 9,
+      "author": "reader9",
+      "text": "Comment number 9"
+    },
+    {
+      "seq": 10,
+      "author": "reader10",
+      "text": "Comment number 10"
+    },
+    {
+      "seq": 11,
+      "author": "reader11",
+      "text": "Comment number 11"
+    },
+    {
+      "seq": 12,
+      "author": "reader12",
+      "text": "Comment number 12"
+    },
+    {
+      "seq": 13,
+      "author": "reader13",
+      "text": "Comment number 13"
+    },
+    {
+      "seq": 14,
+      "author": "reader14",
+      "text": "Comment number 14"
+    },
+    {
+      "seq": 15,
+      "author": "reader15",
+      "text": "Comment number 15"
+    },
+    {
+      "seq": 16,
+      "author": "reader16",
+      "text": "Comment number 16"
+    },
+    {
+      "seq": 17,
+      "author": "reader17",
+      "text": "Comment number 17"
+    },
+    {
+      "seq": 18,
+      "author": "reader18",
+      "text": "Comment number 18"
+    },
+    {
+      "seq": 19,
+      "author": "reader19",
+      "text": "Comment number 19"
+    }
+  ],
+  "busy_post_comments_total_count": 500
+}

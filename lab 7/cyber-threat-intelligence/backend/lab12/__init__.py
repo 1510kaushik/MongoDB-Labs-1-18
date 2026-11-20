@@ -1,0 +1,1 @@
+from .routes import lab12_bp

@@ -1,0 +1,6 @@
+Index Type,Parameters,Build Time (s),Avg Query Latency (ms),Recall (%)
+HNSW,"M=16, efConstruction=100",7.7,33.75,100.0
+HNSW,"M=16, efConstruction=128",5.2,15.05,100.0
+HNSW,"M=16, efConstruction=256",4.2,18.1,100.0
+HNSW,"M=16, efConstruction=512",6.4,12.12,100.0
+FLAT,exact,3.1,12.36,100.0

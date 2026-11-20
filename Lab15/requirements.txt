@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pymongo
+python-jose[cryptography]
+pwdlib[argon2]
+python-dotenv
+httpx
+pytest

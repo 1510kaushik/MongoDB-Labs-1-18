@@ -1,0 +1,79 @@
+[{
+  "_id": {
+    "$oid": "6a9e7fdf39cae871388c2c22"
+  },
+  "title": "Data Structures",
+  "code": "CS201",
+  "instructor": "Dr. Anil Gupta",
+  "credits": 4,
+  "schedule": {
+    "days": [
+      "Monday",
+      "Wednesday"
+    ],
+    "time": "08:00-09:30",
+    "room": "LH-101"
+  },
+  "prerequisites": []
+},
+{
+  "_id": {
+    "$oid": "6a9e7fdf39cae871388c2c23"
+  },
+  "title": "Algorithms",
+  "code": "CS301",
+  "instructor": "Dr. Meera Joshi",
+  "credits": 4,
+  "schedule": {
+    "days": [
+      "Tuesday",
+      "Thursday"
+    ],
+    "time": "08:00-09:30",
+    "room": "LH-103"
+  },
+  "prerequisites": [
+    "CS201"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a9e7fdf39cae871388c2c24"
+  },
+  "title": "Introduction to Machine Learning",
+  "code": "CS401",
+  "instructor": "Dr. Priya Sharma",
+  "credits": 4,
+  "schedule": {
+    "days": [
+      "Monday",
+      "Wednesday"
+    ],
+    "time": "10:00-11:30",
+    "room": "LH-201"
+  },
+  "prerequisites": [
+    "CS201",
+    "CS301"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6a9e7fdf39cae871388c2c25"
+  },
+  "title": "Deep Learning with PyTorch",
+  "code": "CS402",
+  "instructor": "Dr. Anil Gupta",
+  "credits": 3,
+  "schedule": {
+    "days": [
+      "Tuesday",
+      "Thursday"
+    ],
+    "time": "14:00-15:30",
+    "room": "LH-305"
+  },
+  "prerequisites": [
+    "CS401"
+  ]
+}]

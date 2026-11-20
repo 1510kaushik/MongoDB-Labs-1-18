@@ -1,0 +1,15 @@
+﻿.env
+.venv/
+__pycache__/
+*.pyc
+
+certificates/ca/ca.key
+certificates/ca/ca.srl
+certificates/server/*.key
+certificates/server/*.csr
+certificates/server/*.pem
+certificates/client/*.key
+certificates/client/*.csr
+certificates/client/*.pem
+
+results/

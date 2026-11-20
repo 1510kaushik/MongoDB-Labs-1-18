@@ -1,0 +1,13 @@
+const dbName = db.getName();
+print(`Creating indexes in ${dbName}`);
+db.threats.createIndex({ cve_id: 1 }, { unique: true });
+db.threats.createIndex({ vendor_project: 1 });
+db.threats.createIndex({ "classification.category": 1 });
+db.threats.createIndex({ date_added: -1 });
+db.reports.createIndex({ url: 1 }, { unique: true });
+db.reports.createIndex({ year: -1 });
+db.sources.createIndex({ source_key: 1 }, { unique: true, sparse: true });
+db.threat_source_links.createIndex({ threat_id: 1, source_id: 1 }, { unique: true });
+db.performance_events.createIndex({ timestamp: -1 });
+db.schema_metrics.createIndex({ measured_at: -1 });
+print("Indexes created.");

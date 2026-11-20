@@ -1,0 +1,1 @@
+Save your own measured outputs and screenshots here after running the application. Do not submit invented BSON sizes or cache-hit results. Suggested files: schema-analysis.txt, cache-observations.md, dashboard-screenshot.png.

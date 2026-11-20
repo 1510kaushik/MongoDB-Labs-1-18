@@ -1,0 +1,49 @@
+﻿name: lab18
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: lab18-mongo
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      retries: 20
+  cassandra:
+    image: cassandra:4.1
+    container_name: lab18-cassandra
+    mem_limit: 3g
+    environment:
+      MAX_HEAP_SIZE: 1G
+      HEAP_NEWSIZE: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces' >/dev/null 2>&1"]
+      interval: 10s
+      retries: 30
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: lab18-neo4j
+    mem_limit: 3g
+    environment:
+      NEO4J_AUTH: neo4j/lab18password
+      NEO4J_PLUGINS: '["graph-data-science"]'
+      NEO4J_server_memory_heap_initial__size: 1G
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
+      NEO4J_dbms_security_procedures_unrestricted: gds.*
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p lab18password 'RETURN 1' >/dev/null 2>&1"]
+      interval: 10s
+      retries: 30
+  runner:
+    image: python:3.12-slim
+    container_name: lab18-runner
+    working_dir: /work
+    volumes: [".:/work"]
+    environment:
+      CASS_DRIVER_NO_CYTHON: "1"
+      PYTHONUNBUFFERED: "1"
+    command: sleep infinity
+    depends_on:
+      mongo: {condition: service_healthy}
+      cassandra: {condition: service_healthy}
+      neo4j: {condition: service_healthy}

@@ -1,0 +1,266 @@
+{
+    "lab": "Lab 10.2 - Inventory Reservation Transaction",
+    "timestamp": "2026-11-19T10:41:16.011061+00:00",
+    "tests": [
+        {
+            "test": "Initialize inventory",
+            "status": "PASS"
+        },
+        {
+            "test": "Single inventory reservation",
+            "status": "PASS"
+        },
+        {
+            "test": "Insufficient stock protection",
+            "status": "PASS"
+        },
+        {
+            "test": "8 concurrent requests against stock of 5",
+            "status": "PASS"
+        }
+    ],
+    "benchmarks": [
+        {
+            "method": "transactional",
+            "threads": 1,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.8242,
+            "throughput_requests_per_second": 121.33,
+            "final_stock": 0
+        },
+        {
+            "method": "transactional",
+            "threads": 4,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.9817,
+            "throughput_requests_per_second": 101.86,
+            "final_stock": 0
+        },
+        {
+            "method": "transactional",
+            "threads": 8,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 1.0985,
+            "throughput_requests_per_second": 91.03,
+            "final_stock": 0
+        },
+        {
+            "method": "transactional",
+            "threads": 16,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 1.149,
+            "throughput_requests_per_second": 87.03,
+            "final_stock": 0
+        },
+        {
+            "method": "atomic",
+            "threads": 1,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.5335,
+            "throughput_requests_per_second": 187.43,
+            "final_stock": 0
+        },
+        {
+            "method": "atomic",
+            "threads": 4,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.1946,
+            "throughput_requests_per_second": 513.9,
+            "final_stock": 0
+        },
+        {
+            "method": "atomic",
+            "threads": 8,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.1332,
+            "throughput_requests_per_second": 751.0,
+            "final_stock": 0
+        },
+        {
+            "method": "atomic",
+            "threads": 16,
+            "total_requests": 100,
+            "successful": 100,
+            "failed": 0,
+            "elapsed_seconds": 0.1335,
+            "throughput_requests_per_second": 749.32,
+            "final_stock": 0
+        }
+    ],
+    "concurrency_test": {
+        "product_id": "PROD_CONCURRENT",
+        "requests": 8,
+        "initial_stock": 5,
+        "successful_reservations": 5,
+        "failed_reservations": 3,
+        "final_stock": 0,
+        "results": [
+            {
+                "success": true,
+                "order_id": "f5311cb3-fb69-4fbb-9d09-a1eb782d3e5a",
+                "customer_id": "CUSTOMER_001",
+                "product_id": "PROD_CONCURRENT",
+                "quantity": 1,
+                "message": "Inventory reserved successfully.",
+                "attempts": 1
+            },
+            {
+                "success": true,
+                "order_id": "dd8bdafd-8ba8-4568-b39a-8dd3e35bd7be",
+                "customer_id": "CUSTOMER_002",
+                "product_id": "PROD_CONCURRENT",
+                "quantity": 1,
+                "message": "Inventory reserved successfully.",
+                "attempts": 3
+            },
+            {
+                "success": true,
+                "order_id": "b5337575-7982-43aa-ad4a-7562c42f5486",
+                "customer_id": "CUSTOMER_003",
+                "product_id": "PROD_CONCURRENT",
+                "quantity": 1,
+                "message": "Inventory reserved successfully.",
+                "attempts": 2
+            },
+            {
+                "success": false,
+                "customer_id": "CUSTOMER_004",
+                "product_id": "PROD_CONCURRENT",
+                "message": "Not enough stock available.",
+                "reason": "INSUFFICIENT_STOCK"
+            },
+            {
+                "success": false,
+                "customer_id": "CUSTOMER_005",
+                "product_id": "PROD_CONCURRENT",
+                "message": "Not enough stock available.",
+                "reason": "INSUFFICIENT_STOCK"
+            },
+            {
+                "success": false,
+                "customer_id": "CUSTOMER_006",
+                "product_id": "PROD_CONCURRENT",
+                "message": "Not enough stock available.",
+                "reason": "INSUFFICIENT_STOCK"
+            },
+            {
+                "success": true,
+                "order_id": "b2b86ad7-4bd6-4746-b6fe-c05f93455b0f",
+                "customer_id": "CUSTOMER_007",
+                "product_id": "PROD_CONCURRENT",
+                "quantity": 1,
+                "message": "Inventory reserved successfully.",
+                "attempts": 2
+            },
+            {
+                "success": true,
+                "order_id": "055eb36b-bc8d-49e0-9f17-54d6fd9039de",
+                "customer_id": "CUSTOMER_008",
+                "product_id": "PROD_CONCURRENT",
+                "quantity": 1,
+                "message": "Inventory reserved successfully.",
+                "attempts": 1
+            }
+        ]
+    },
+    "final_products": [
+        {
+            "product_id": "PROD001",
+            "name": "Wireless Headphones",
+            "stock": 4,
+            "version": 2,
+            "updated_at": "2026-11-19 10:41:16.057000"
+        },
+        {
+            "product_id": "PROD002",
+            "name": "Limited Edition Keyboard",
+            "stock": 2,
+            "version": 1,
+            "updated_at": "2026-11-19 10:41:16.100000"
+        },
+        {
+            "product_id": "PROD_CONCURRENT",
+            "name": "Concurrent Test Product",
+            "stock": 0,
+            "version": 6,
+            "updated_at": "2026-11-19 10:41:16.233000"
+        },
+        {
+            "product_id": "BENCH_TRANSACTIONAL_1",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:17.132000"
+        },
+        {
+            "product_id": "BENCH_TRANSACTIONAL_4",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:18.117000"
+        },
+        {
+            "product_id": "BENCH_TRANSACTIONAL_8",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:19.223000"
+        },
+        {
+            "product_id": "BENCH_TRANSACTIONAL_16",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:20.375000"
+        },
+        {
+            "product_id": "BENCH_ATOMIC_1",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:20.915000"
+        },
+        {
+            "product_id": "BENCH_ATOMIC_4",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:21.113000"
+        },
+        {
+            "product_id": "BENCH_ATOMIC_8",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:21.249000"
+        },
+        {
+            "product_id": "BENCH_ATOMIC_16",
+            "name": "Performance Benchmark Product",
+            "stock": 0,
+            "version": 101,
+            "updated_at": "2026-11-19 10:41:21.388000"
+        }
+    ],
+    "total_orders": 806,
+    "summary": {
+        "total_tests": 4,
+        "passed": 4,
+        "failed": 0,
+        "overall_status": "PASS"
+    }
+}

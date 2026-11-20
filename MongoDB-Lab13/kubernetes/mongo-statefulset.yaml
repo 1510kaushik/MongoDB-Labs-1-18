@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: lab13
+spec:
+  serviceName: mongo-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      initContainers:
+        - name: copy-keyfile
+          image: mongo:7.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              cp /source/keyfile /keyfile/keyfile
+              chown 999:999 /keyfile/keyfile
+              chmod 400 /keyfile/keyfile
+          volumeMounts:
+            - name: keyfile-secret
+              mountPath: /source
+              readOnly: true
+            - name: keyfile-work
+              mountPath: /keyfile
+      containers:
+        - name: mongodb
+          image: mongo:7.0
+          command:
+            - mongod
+            - --replSet
+            - rs0
+            - --bind_ip_all
+            - --auth
+            - --keyFile
+            - /etc/mongo-keyfile/keyfile
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+            - name: keyfile-work
+              mountPath: /etc/mongo-keyfile
+              readOnly: true
+          readinessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: keyfile-secret
+          secret:
+            secretName: mongo-keyfile
+        - name: keyfile-work
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

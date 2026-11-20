@@ -1,0 +1,1 @@
+No third-party data is bundled. Run `python -m backend.ingest_cisa` and `python -m backend.ingest_reports` to fetch genuine source data. The 100,000-document benchmark data is generated locally by the performance script and is not a threat dataset.

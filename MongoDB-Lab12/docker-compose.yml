@@ -1,0 +1,28 @@
+﻿
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: lab12-mongodb
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27131:27017"
+    env_file:
+      - .env
+    command:
+      - mongod
+      - --bind_ip_all
+      - --auth
+      - --tlsMode
+      - requireTLS
+      - --tlsCertificateKeyFile
+      - /etc/mongo/certs/server.pem
+      - --tlsCAFile
+      - /etc/mongo/certs/ca.crt
+    volumes:
+      - lab12_mongo_data:/data/db
+      - ./certificates/server/server.pem:/etc/mongo/certs/server.pem:ro
+      - ./certificates/ca/ca.crt:/etc/mongo/certs/ca.crt:ro
+      - ./certificates/client/client.pem:/etc/mongo/certs/client.pem:ro
+
+volumes:
+  lab12_mongo_data:

@@ -1,0 +1,35 @@
+{
+    "lab": "9.1",
+    "title": "Measure Write Concern Latency",
+    "timestamp": "2026-11-19T21:03:19.167161+00:00",
+    "replica_set": "rs0",
+    "voting_data_members": 3,
+    "document_count": 1000,
+    "write_concern_note": "MongoDB does not support literal w:all. The w:all experiment uses numeric w equal to the number of voting data-bearing members. Arbiters are excluded.",
+    "results": {
+        "w:1": {
+            "documents": 1000,
+            "total_time_seconds": 2.758533,
+            "average_latency_ms": 2.758533,
+            "minimum_latency_ms": 1.7581,
+            "maximum_latency_ms": 25.4492,
+            "write_concern": 1
+        },
+        "w:majority": {
+            "documents": 1000,
+            "total_time_seconds": 6.392215,
+            "average_latency_ms": 6.392215,
+            "minimum_latency_ms": 4.6701,
+            "maximum_latency_ms": 49.8099,
+            "write_concern": "majority"
+        },
+        "w:all": {
+            "documents": 1000,
+            "total_time_seconds": 4.906741,
+            "average_latency_ms": 4.906741,
+            "minimum_latency_ms": 3.4677,
+            "maximum_latency_ms": 78.7541,
+            "write_concern": 3
+        }
+    }
+}

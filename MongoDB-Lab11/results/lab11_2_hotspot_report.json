@@ -1,0 +1,442 @@
+{
+    "lab": "11.2 - Shard Key Hotspot Detection",
+    "database": "mongodb_lab11",
+    "documents_inserted_per_collection": 10000,
+    "timestamp_collection": {
+        "collection": "hotspot_data",
+        "total_count": 10000,
+        "total_size_bytes": 1180000,
+        "per_shard": {
+            "shard2RS": {
+                "count": 10000,
+                "size": 1180000,
+                "storageSize": 4096
+            }
+        }
+    },
+    "hashed_collection": {
+        "collection": "even_data",
+        "total_count": 10000,
+        "total_size_bytes": 1300000,
+        "per_shard": {
+            "shard1RS": {
+                "count": 5081,
+                "size": 660530,
+                "storageSize": 4096
+            },
+            "shard2RS": {
+                "count": 4919,
+                "size": 639470,
+                "storageSize": 4096
+            }
+        }
+    },
+    "range_query_comparison": {
+        "timestamp_range_query": {
+            "targeted_shards": [
+                "shard2RS"
+            ],
+            "execution_time_ms": 7,
+            "total_docs_examined": 1000,
+            "total_docs_returned": 1000,
+            "query_planner": {
+                "mongosPlannerVersion": 1,
+                "winningPlan": {
+                    "stage": "SINGLE_SHARD",
+                    "shards": [
+                        {
+                            "shardName": "shard2RS",
+                            "connectionString": "shard2RS/shard2:27017",
+                            "serverInfo": {
+                                "host": "9d9619b31cfb",
+                                "port": 27017,
+                                "version": "7.0.45",
+                                "gitVersion": "a52313e13ab55c9bddf7c3ff91dab286fa381796"
+                            },
+                            "namespace": "mongodb_lab11.hotspot_data",
+                            "indexFilterSet": false,
+                            "parsedQuery": {
+                                "$and": [
+                                    {
+                                        "ts": {
+                                            "$lt": "2025-01-01 00:33:20"
+                                        }
+                                    },
+                                    {
+                                        "ts": {
+                                            "$gte": "2025-01-01 00:16:40"
+                                        }
+                                    }
+                                ]
+                            },
+                            "queryHash": "961540A5",
+                            "planCacheKey": "C8A844E5",
+                            "optimizationTimeMillis": 0,
+                            "maxIndexedOrSolutionsReached": false,
+                            "maxIndexedAndSolutionsReached": false,
+                            "maxScansToExplodeReached": false,
+                            "winningPlan": {
+                                "stage": "FETCH",
+                                "inputStage": {
+                                    "stage": "SHARDING_FILTER",
+                                    "inputStage": {
+                                        "stage": "IXSCAN",
+                                        "keyPattern": {
+                                            "ts": 1
+                                        },
+                                        "indexName": "ts_1",
+                                        "isMultiKey": false,
+                                        "multiKeyPaths": {
+                                            "ts": []
+                                        },
+                                        "isUnique": false,
+                                        "isSparse": false,
+                                        "isPartial": false,
+                                        "indexVersion": 2,
+                                        "direction": "forward",
+                                        "indexBounds": {
+                                            "ts": [
+                                                "[new Date(1735690600000), new Date(1735691600000))"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "rejectedPlans": []
+                        }
+                    ]
+                }
+            },
+            "raw_execution_stats": {
+                "nReturned": 1000,
+                "executionTimeMillis": 7,
+                "totalKeysExamined": 1000,
+                "totalDocsExamined": 1000,
+                "executionStages": {
+                    "stage": "SINGLE_SHARD",
+                    "nReturned": 1000,
+                    "executionTimeMillis": 7,
+                    "totalKeysExamined": 1000,
+                    "totalDocsExamined": 1000,
+                    "totalChildMillis": 2,
+                    "shards": [
+                        {
+                            "shardName": "shard2RS",
+                            "executionSuccess": true,
+                            "nReturned": 1000,
+                            "executionTimeMillis": 2,
+                            "totalKeysExamined": 1000,
+                            "totalDocsExamined": 1000,
+                            "executionStages": {
+                                "stage": "FETCH",
+                                "nReturned": 1000,
+                                "executionTimeMillisEstimate": 0,
+                                "works": 1001,
+                                "advanced": 1000,
+                                "needTime": 0,
+                                "needYield": 0,
+                                "saveState": 1,
+                                "restoreState": 1,
+                                "isEOF": 1,
+                                "docsExamined": 1000,
+                                "alreadyHasObj": 0,
+                                "inputStage": {
+                                    "stage": "SHARDING_FILTER",
+                                    "nReturned": 1000,
+                                    "executionTimeMillisEstimate": 0,
+                                    "works": 1001,
+                                    "advanced": 1000,
+                                    "needTime": 0,
+                                    "needYield": 0,
+                                    "saveState": 1,
+                                    "restoreState": 1,
+                                    "isEOF": 1,
+                                    "chunkSkips": 0,
+                                    "inputStage": {
+                                        "stage": "IXSCAN",
+                                        "nReturned": 1000,
+                                        "executionTimeMillisEstimate": 0,
+                                        "works": 1001,
+                                        "advanced": 1000,
+                                        "needTime": 0,
+                                        "needYield": 0,
+                                        "saveState": 1,
+                                        "restoreState": 1,
+                                        "isEOF": 1,
+                                        "keyPattern": {
+                                            "ts": 1
+                                        },
+                                        "indexName": "ts_1",
+                                        "isMultiKey": false,
+                                        "multiKeyPaths": {
+                                            "ts": []
+                                        },
+                                        "isUnique": false,
+                                        "isSparse": false,
+                                        "isPartial": false,
+                                        "indexVersion": 2,
+                                        "direction": "forward",
+                                        "indexBounds": {
+                                            "ts": [
+                                                "[new Date(1735690600000), new Date(1735691600000))"
+                                            ]
+                                        },
+                                        "keysExamined": 1000,
+                                        "seeks": 1,
+                                        "dupsTested": 0,
+                                        "dupsDropped": 0
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "hashed_original_field_range_query": {
+            "targeted_shards": [
+                "shard1RS",
+                "shard2RS"
+            ],
+            "execution_time_ms": 7,
+            "total_docs_examined": 10000,
+            "total_docs_returned": 1000,
+            "query_planner": {
+                "mongosPlannerVersion": 1,
+                "winningPlan": {
+                    "stage": "SHARD_MERGE",
+                    "shards": [
+                        {
+                            "shardName": "shard2RS",
+                            "connectionString": "shard2RS/shard2:27017",
+                            "serverInfo": {
+                                "host": "9d9619b31cfb",
+                                "port": 27017,
+                                "version": "7.0.45",
+                                "gitVersion": "a52313e13ab55c9bddf7c3ff91dab286fa381796"
+                            },
+                            "namespace": "mongodb_lab11.even_data",
+                            "indexFilterSet": false,
+                            "parsedQuery": {
+                                "$and": [
+                                    {
+                                        "user_id": {
+                                            "$lt": "6aff64112e9cc37036f04740"
+                                        }
+                                    },
+                                    {
+                                        "user_id": {
+                                            "$gte": "6aff64112e9cc37036f04358"
+                                        }
+                                    }
+                                ]
+                            },
+                            "queryHash": "4CCF08CF",
+                            "planCacheKey": "FD99942D",
+                            "optimizationTimeMillis": 0,
+                            "maxIndexedOrSolutionsReached": false,
+                            "maxIndexedAndSolutionsReached": false,
+                            "maxScansToExplodeReached": false,
+                            "winningPlan": {
+                                "stage": "SHARDING_FILTER",
+                                "inputStage": {
+                                    "stage": "COLLSCAN",
+                                    "filter": {
+                                        "$and": [
+                                            {
+                                                "user_id": {
+                                                    "$lt": "6aff64112e9cc37036f04740"
+                                                }
+                                            },
+                                            {
+                                                "user_id": {
+                                                    "$gte": "6aff64112e9cc37036f04358"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "direction": "forward"
+                                }
+                            },
+                            "rejectedPlans": []
+                        },
+                        {
+                            "shardName": "shard1RS",
+                            "connectionString": "shard1RS/shard1:27017",
+                            "serverInfo": {
+                                "host": "701c0ffb4195",
+                                "port": 27017,
+                                "version": "7.0.45",
+                                "gitVersion": "a52313e13ab55c9bddf7c3ff91dab286fa381796"
+                            },
+                            "namespace": "mongodb_lab11.even_data",
+                            "indexFilterSet": false,
+                            "parsedQuery": {
+                                "$and": [
+                                    {
+                                        "user_id": {
+                                            "$lt": "6aff64112e9cc37036f04740"
+                                        }
+                                    },
+                                    {
+                                        "user_id": {
+                                            "$gte": "6aff64112e9cc37036f04358"
+                                        }
+                                    }
+                                ]
+                            },
+                            "queryHash": "4CCF08CF",
+                            "planCacheKey": "FD99942D",
+                            "optimizationTimeMillis": 0,
+                            "maxIndexedOrSolutionsReached": false,
+                            "maxIndexedAndSolutionsReached": false,
+                            "maxScansToExplodeReached": false,
+                            "winningPlan": {
+                                "stage": "SHARDING_FILTER",
+                                "inputStage": {
+                                    "stage": "COLLSCAN",
+                                    "filter": {
+                                        "$and": [
+                                            {
+                                                "user_id": {
+                                                    "$lt": "6aff64112e9cc37036f04740"
+                                                }
+                                            },
+                                            {
+                                                "user_id": {
+                                                    "$gte": "6aff64112e9cc37036f04358"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "direction": "forward"
+                                }
+                            },
+                            "rejectedPlans": []
+                        }
+                    ]
+                }
+            },
+            "raw_execution_stats": {
+                "nReturned": 1000,
+                "executionTimeMillis": 7,
+                "totalKeysExamined": 0,
+                "totalDocsExamined": 10000,
+                "executionStages": {
+                    "stage": "SHARD_MERGE",
+                    "nReturned": 1000,
+                    "executionTimeMillis": 7,
+                    "totalKeysExamined": 0,
+                    "totalDocsExamined": 10000,
+                    "totalChildMillis": 9,
+                    "shards": [
+                        {
+                            "shardName": "shard2RS",
+                            "executionSuccess": true,
+                            "nReturned": 493,
+                            "executionTimeMillis": 4,
+                            "totalKeysExamined": 0,
+                            "totalDocsExamined": 4919,
+                            "executionStages": {
+                                "stage": "SHARDING_FILTER",
+                                "nReturned": 493,
+                                "executionTimeMillisEstimate": 0,
+                                "works": 4920,
+                                "advanced": 493,
+                                "needTime": 4426,
+                                "needYield": 0,
+                                "saveState": 4,
+                                "restoreState": 4,
+                                "isEOF": 1,
+                                "chunkSkips": 0,
+                                "inputStage": {
+                                    "stage": "COLLSCAN",
+                                    "filter": {
+                                        "$and": [
+                                            {
+                                                "user_id": {
+                                                    "$lt": "6aff64112e9cc37036f04740"
+                                                }
+                                            },
+                                            {
+                                                "user_id": {
+                                                    "$gte": "6aff64112e9cc37036f04358"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "nReturned": 493,
+                                    "executionTimeMillisEstimate": 0,
+                                    "works": 4920,
+                                    "advanced": 493,
+                                    "needTime": 4426,
+                                    "needYield": 0,
+                                    "saveState": 4,
+                                    "restoreState": 4,
+                                    "isEOF": 1,
+                                    "direction": "forward",
+                                    "docsExamined": 4919
+                                }
+                            }
+                        },
+                        {
+                            "shardName": "shard1RS",
+                            "executionSuccess": true,
+                            "nReturned": 507,
+                            "executionTimeMillis": 5,
+                            "totalKeysExamined": 0,
+                            "totalDocsExamined": 5081,
+                            "executionStages": {
+                                "stage": "SHARDING_FILTER",
+                                "nReturned": 507,
+                                "executionTimeMillisEstimate": 0,
+                                "works": 5082,
+                                "advanced": 507,
+                                "needTime": 4574,
+                                "needYield": 0,
+                                "saveState": 5,
+                                "restoreState": 5,
+                                "isEOF": 1,
+                                "chunkSkips": 0,
+                                "inputStage": {
+                                    "stage": "COLLSCAN",
+                                    "filter": {
+                                        "$and": [
+                                            {
+                                                "user_id": {
+                                                    "$lt": "6aff64112e9cc37036f04740"
+                                                }
+                                            },
+                                            {
+                                                "user_id": {
+                                                    "$gte": "6aff64112e9cc37036f04358"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "nReturned": 507,
+                                    "executionTimeMillisEstimate": 0,
+                                    "works": 5082,
+                                    "advanced": 507,
+                                    "needTime": 4574,
+                                    "needYield": 0,
+                                    "saveState": 5,
+                                    "restoreState": 5,
+                                    "isEOF": 1,
+                                    "direction": "forward",
+                                    "docsExamined": 5081
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "interpretation": [
+        "A monotonically increasing ranged shard key directs new inserts toward the chunk containing the highest key values.",
+        "A hashed shard key distributes hashed values across chunks, which can improve write distribution.",
+        "Range queries on the original field of a hashed shard key generally require scatter-gather because hashing does not preserve the original value order.",
+        "Actual shard counts depend on chunk placement and balancer activity; use the measured statistics above rather than assuming a fixed split."
+    ]
+}

@@ -1,0 +1,155 @@
+﻿services:
+  keyfile-init:
+    image: mongo:7.0
+    container_name: lab13-keyfile-init
+    user: "0:0"
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        if [ ! -s /keyfile/keyfile ]; then
+          cp /source/keyfile /keyfile/keyfile
+        fi
+        chown 999:999 /keyfile/keyfile
+        chmod 400 /keyfile/keyfile
+        test -s /keyfile/keyfile
+    volumes:
+      - ./keyfile:/source/keyfile:ro
+      - lab13_keyfile:/keyfile
+    restart: "no"
+  mongo1:
+    image: mongo:7.0
+    container_name: lab13-mongo1
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --auth
+      - --keyFile
+      - /etc/mongo-keyfile/keyfile
+    ports:
+      - "27141:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?Missing MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Missing MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo1_data:/data/db
+      - lab13_keyfile:/etc/mongo-keyfile:ro
+    depends_on:
+      keyfile-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand({ ping: 1 }).ok" | grep -q 1'
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+
+  mongo2:
+    image: mongo:7.0
+    container_name: lab13-mongo2
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --auth
+      - --keyFile
+      - /etc/mongo-keyfile/keyfile
+    ports:
+      - "27142:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?Missing MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Missing MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo2_data:/data/db
+      - lab13_keyfile:/etc/mongo-keyfile:ro
+    depends_on:
+      keyfile-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand({ ping: 1 }).ok" | grep -q 1'
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+
+  mongo3:
+    image: mongo:7.0
+    container_name: lab13-mongo3
+    command:
+      - mongod
+      - --replSet
+      - rs0
+      - --bind_ip_all
+      - --auth
+      - --keyFile
+      - /etc/mongo-keyfile/keyfile
+    ports:
+      - "27143:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?Missing MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Missing MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo3_data:/data/db
+      - lab13_keyfile:/etc/mongo-keyfile:ro
+    depends_on:
+      keyfile-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand({ ping: 1 }).ok" | grep -q 1'
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    restart: unless-stopped
+
+
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.47.2
+    container_name: lab13-mongodb-exporter
+    environment:
+      MONGODB_USER: ${MONGO_MONITOR_USERNAME:?Missing MONGO_MONITOR_USERNAME}
+      MONGODB_PASSWORD: ${MONGO_MONITOR_PASSWORD:?Missing MONGO_MONITOR_PASSWORD}
+      MONGODB_URI: "mongodb://host.docker.internal:27141,host.docker.internal:27142,host.docker.internal:27143/admin?replicaSet=rs0&authSource=admin"
+    command:
+      - --no-mongodb.direct-connect
+      - --collector.replicasetstatus
+      - --collector.replicasetconfig
+      - --collector.dbstats
+    ports:
+      - "9216:9216"
+    depends_on:
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: lab13-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - mongodb-exporter
+    restart: unless-stopped
+
+volumes:
+  lab13_keyfile:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:

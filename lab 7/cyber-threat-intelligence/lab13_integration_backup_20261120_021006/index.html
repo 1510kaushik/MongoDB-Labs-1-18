@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cyber Threat Intelligence | MongoDB Labs</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brandmark">CTI<span>.</span></div>
+    <div><strong>Cyber Threat Intelligence</strong><small>MongoDB Labs 7 – 10</small></div>
+    <div id="connection" class="status">Checking databaseâ€¦</div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">THREAT LANDSCAPE / LIVE DATA</p>
+        <h1>Understand the threat.<br><span>Follow the evidence.</span></h1>
+        <p class="hero-copy">Search real CISA Known Exploited Vulnerabilities and explore source-attributed security reports. Classification labels preserve source provenance.</p>
+        <div class="actions">
+          <button id="syncCisa">Sync CISA data</button>
+          <button id="syncReports" class="secondary">Discover reports</button>
+        </div>
+        <p id="syncMessage" class="message" aria-live="polite"></p>
+      </div>
+      <div class="hero-orbit" aria-hidden="true"><div class="orbit orbit1"></div><div class="orbit orbit2"></div><div class="orbit-core">CVE</div></div>
+    </section>
+    <section class="stats">
+      <article class="stat"><span>Threat records</span><strong id="threatCount">â€”</strong><small>Imported from CISA KEV</small></article>
+      <article class="stat"><span>Report links</span><strong id="reportCount">â€”</strong><small>Curated index links</small></article>
+      <article class="stat"><span>Schema analysis</span><strong id="schemaStatus">Not run</strong><small>Measured BSON document sizes</small></article>
+      <article class="stat"><span>Cache samples</span><strong id="cacheCount">â€”</strong><small>WiredTiger monitor</small></article>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">INTELLIGENCE SEARCH</p><h2>Threat explorer</h2></div><span class="tag">Source-attributed</span></div>
+      <form id="searchForm" class="search-row">
+        <input id="searchInput" placeholder="Search CVE, vendor, product or descriptionâ€¦" aria-label="Search threats">
+        <select id="categoryFilter" aria-label="Classification">
+          <option value="">All classifications</option>
+          <option value="Known Exploited Vulnerability">Known exploited vulnerabilities</option>
+        </select>
+        <button type="submit">Search</button>
+      </form>
+      <div class="table-wrap"><table><thead><tr><th>CVE / Title</th><th>Vendor / Product</th><th>Added</th><th>Classification</th><th>Source</th></tr></thead><tbody id="threatRows"><tr><td colspan="5" class="empty">Loading threatsâ€¦</td></tr></tbody></table></div>
+      <div class="pagination"><span id="resultCount">0 results</span><div><button id="prevPage" class="secondary" disabled>Previous</button><button id="nextPage" class="secondary" disabled>Next</button></div></div>
+    </section>
+    <section class="two-col">
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">DISCOVERY</p><h2>Annual security reports</h2></div></div>
+        <form id="reportSearchForm" class="search-row"><input id="reportSearchInput" placeholder="Search report title or URL"><button type="submit">Search</button></form>
+        <div id="reportList" class="report-list"><p class="empty">Loading report linksâ€¦</p></div>
+        <p class="note">Report metadata is discovered from a public index. Confirm title and date at the original publisher.</p>
+      </article>
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 7.1 / 7.2</p><h2>Database observability</h2></div></div>
+        <div class="metric-line"><span>Average BSON size</span><strong id="avgBson">Not measured</strong></div>
+        <div class="metric-line"><span>Largest BSON document</span><strong id="maxBson">Not measured</strong></div>
+        <div class="metric-line"><span>Documents â‰¥ 15 MiB</span><strong id="nearLimit">Not measured</strong></div>
+        <div class="metric-line"><span>Latest cache utilization</span><strong id="cacheUtil">Not measured</strong></div>
+        <button id="refreshMetrics" class="secondary full">Refresh measurements</button>
+        <p class="note">Run the schema analysis and cache monitor scripts on your MongoDB instance to populate these measurements.</p>
+      </article>
+    </section>
+    <section class="two-col">
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 7.1 / MEASURED DATA</p><h2>Embedding vs referencing</h2></div><span class="tag" id="lab71Status">Checkingâ€¦</span></div>
+        <div class="metric-line"><span>Embedded documents</span><strong id="embeddedCount">â€”</strong></div>
+        <div class="metric-line"><span>Average embedded BSON</span><strong id="embeddedAvg">â€”</strong></div>
+        <div class="metric-line"><span>Referenced documents</span><strong id="referencedCount">â€”</strong></div>
+        <div class="metric-line"><span>Average referenced BSON</span><strong id="referencedAvg">â€”</strong></div>
+        <div class="metric-line"><span>Average document-size reduction</span><strong id="sizeReduction">â€”</strong></div>
+        <div class="metric-line"><span>Reference integrity (valid / missing)</span><strong id="referenceIntegrity">â€”</strong></div>
+        <p class="note" id="lab71Note">Measurements are calculated from the Lab 7.1 collections when available.</p>
+      </article>
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 8 / LIVE STATUS</p><h2>Replica-set health</h2></div><span class="tag" id="replicaSetName">Checkingâ€¦</span></div>
+        <div class="metric-line"><span>Current primary</span><strong id="replicaPrimary">â€”</strong></div>
+        <div id="replicaMembers"><p class="empty">Loading replica-set membersâ€¦</p></div>
+        <p class="note" id="replicaNote">Live status from MongoDB replSetGetStatus. This does not represent historical failover events.</p>
+      </article>
+    </section>
+    <section class="panel" id="lab91">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LAB 9.1 / MONGODB RS0</p>
+          <h2>Write Concern Latency Benchmark</h2>
+        </div>
+        <span class="tag" id="lab91Status">Ready</span>
+      </div>
+
+      <p class="note">
+        Compare the performance of w:1, w:majority and all voting
+        data-bearing members using 1,000 individual document inserts.
+      </p>
+
+      <div class="lab91-controls">
+        <label for="lab91DocumentCount">Documents per write concern</label>
+        <input id="lab91DocumentCount" type="number"
+               min="1" max="100000" value="1000">
+        <button id="runLab91">Run benchmark</button>
+      </div>
+
+      <p id="lab91Message" class="message" aria-live="polite">
+        Ready to run the benchmark.
+      </p>
+
+      <div class="lab91-results">
+        <article class="stat">
+          <span>w:1 average latency</span>
+          <strong id="lab91W1">—</strong>
+          <small>Milliseconds per insert</small>
+        </article>
+        <article class="stat">
+          <span>w:majority average latency</span>
+          <strong id="lab91Majority">—</strong>
+          <small>Milliseconds per insert</small>
+        </article>
+        <article class="stat">
+          <span>All data-bearing members</span>
+          <strong id="lab91All">—</strong>
+          <small>Numeric write concern</small>
+        </article>
+      </div>
+
+      <div class="lab91-subpanel">
+        <h3>Latency comparison</h3>
+        <div id="lab91Chart">
+          <p class="empty">Run the benchmark to generate the chart.</p>
+        </div>
+      </div>
+
+      <div class="lab91-subpanel">
+        <h3>Detailed measurements</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Write concern</th>
+                <th>Average (ms)</th>
+                <th>Minimum (ms)</th>
+                <th>Maximum (ms)</th>
+                <th>Total (seconds)</th>
+              </tr>
+            </thead>
+            <tbody id="lab91Details">
+              <tr><td colspan="5" class="empty">No benchmark results yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="note" id="lab91Note">
+        Actual measurements will appear here after execution.
+      </p>
+
+      <div class="lab91-subpanel">
+        <div class="section-heading">
+          <h3>Benchmark execution history</h3>
+          <button id="refreshLab91History" class="secondary">Refresh history</button>
+        </div>
+        <div id="lab91History">
+          <p class="empty">Loading saved results...</p>
+        </div>
+      </div>
+    </section>
+        <!-- ==========================================
+         LAB 10.1 - BANK TRANSFER TRANSACTION
+    ========================================== -->
+    <section class="panel" id="lab101">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LAB 10.1 / MULTI-DOCUMENT TRANSACTIONS</p>
+          <h2>Bank Transfer Transaction</h2>
+        </div>
+        <span class="tag" id="lab101Status">Ready</span>
+      </div>
+
+      <p class="note">
+        Build a transfer system using multi-document transactions.
+        Atomically debit one account and credit another within a session,
+        with retry logic using exponential backoff for TransientTransactionError.
+      </p>
+
+      <div class="lab10-controls">
+        <button id="runLab101">Run full demo</button>
+        <button id="resetLab101" class="secondary">Reset accounts</button>
+      </div>
+
+      <p id="lab101Message" class="message" aria-live="polite">
+        Ready to run the Lab 10.1 demo.
+      </p>
+
+      <!-- Account balances -->
+      <div class="lab10-accounts">
+        <h3>Account Balances</h3>
+        <div class="lab91-results" id="lab101Balances">
+          <article class="stat">
+            <span>Alice (A1001)</span>
+            <strong id="lab101A1001">&mdash;</strong>
+            <small>Current balance</small>
+          </article>
+          <article class="stat">
+            <span>Bob (A1002)</span>
+            <strong id="lab101A1002">&mdash;</strong>
+            <small>Current balance</small>
+          </article>
+          <article class="stat">
+            <span>Total money</span>
+            <strong id="lab101Total">&mdash;</strong>
+            <small>Must remain constant</small>
+          </article>
+        </div>
+      </div>
+
+      <!-- Manual transfer -->
+      <div class="lab91-subpanel">
+        <h3>Manual Transfer</h3>
+        <div class="lab10-transfer-form">
+          <select id="lab101From">
+            <option value="A1001">A1001 (Alice)</option>
+            <option value="A1002">A1002 (Bob)</option>
+          </select>
+          <span class="lab10-arrow">&rarr;</span>
+          <select id="lab101To">
+            <option value="A1002">A1002 (Bob)</option>
+            <option value="A1001">A1001 (Alice)</option>
+          </select>
+          <input id="lab101Amount" type="number" min="1" value="100" placeholder="Amount">
+          <button id="lab101Transfer">Transfer</button>
+        </div>
+        <p id="lab101TransferMsg" class="message" aria-live="polite"></p>
+      </div>
+
+      <!-- Demo step results -->
+      <div class="lab91-subpanel">
+        <h3>Demo Step Results</h3>
+        <div id="lab101Steps">
+          <p class="empty">Run the demo to see step-by-step results.</p>
+        </div>
+      </div>
+
+      <!-- Transfer history -->
+      <div class="lab91-subpanel">
+        <div class="section-heading">
+          <h3>Transfer History</h3>
+          <button id="refreshLab101History" class="secondary">Refresh</button>
+        </div>
+        <div id="lab101History">
+          <p class="empty">No transfers yet.</p>
+        </div>
+      </div>
+
+      <!-- Retry visualization -->
+      <div class="lab91-subpanel">
+        <h3>Retry &amp; Exponential Backoff (Activity)</h3>
+        <p class="note">
+          When 10 concurrent threads transfer simultaneously, write conflicts occur.
+          The retry logic catches TransientTransactionError and retries with
+          <code>time.sleep(0.1 &times; 2^attempt)</code> exponential backoff + jitter.
+        </p>
+        <div id="lab101RetryChart">
+          <p class="empty">Run the full demo to see retry behavior.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         LAB 10.2 - INVENTORY RESERVATION
+    ========================================== -->
+    <section class="panel" id="lab102">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LAB 10.2 / DEADLOCK HANDLING</p>
+          <h2>Inventory Reservation System</h2>
+        </div>
+        <span class="tag" id="lab102Status">Ready</span>
+      </div>
+
+      <p class="note">
+        E-commerce inventory reservation using multi-document transactions.
+        Atomically decrement stock and create an order. Test concurrent reservations,
+        observe write conflicts, and compare transactional vs non-transactional throughput.
+      </p>
+
+      <div class="lab10-controls">
+        <button id="runLab102">Run full demo</button>
+        <button id="resetLab102" class="secondary">Reset inventory</button>
+      </div>
+
+      <div class="lab10-controls">
+        <label for="lab102Requests">Requests per concurrency level</label>
+        <input id="lab102Requests" type="number" min="10" max="500" value="50">
+      </div>
+
+      <p id="lab102Message" class="message" aria-live="polite">
+        Ready to run the Lab 10.2 demo.
+      </p>
+
+      <!-- Inventory state -->
+      <div class="lab10-accounts">
+        <h3>Current Inventory</h3>
+        <div class="lab91-results" id="lab102Inventory">
+          <article class="stat">
+            <span>Product</span>
+            <strong id="lab102Product">&mdash;</strong>
+            <small>Wireless Mouse (P100)</small>
+          </article>
+          <article class="stat">
+            <span>Stock</span>
+            <strong id="lab102Stock">&mdash;</strong>
+            <small>Available units</small>
+          </article>
+          <article class="stat">
+            <span>Orders</span>
+            <strong id="lab102OrderCount">&mdash;</strong>
+            <small>Created orders</small>
+          </article>
+        </div>
+      </div>
+
+      <!-- Concurrency test results -->
+      <div class="lab91-subpanel">
+        <h3>Concurrency Test (8 threads &times; 5 stock)</h3>
+        <p class="note">
+          8 threads race to reserve 1 unit each when only 5 are available.
+          Without retries, several fail with WriteConflict. With retries, the first 5
+          succeed and the remaining 3 correctly get OutOfStock.
+        </p>
+        <div id="lab102Concurrency">
+          <p class="empty">Run the demo to see concurrency results.</p>
+        </div>
+      </div>
+
+      <!-- Inconsistency demo -->
+      <div class="lab91-subpanel">
+        <h3>Consistency Comparison</h3>
+        <p class="note">
+          Demonstrates why transactions matter: a failure AFTER the stock decrement
+          with findAndModify causes lost inventory, while a transaction rolls everything back.
+        </p>
+        <div id="lab102Inconsistency">
+          <p class="empty">Run the demo to see the consistency comparison.</p>
+        </div>
+      </div>
+
+      <!-- Throughput benchmark -->
+      <div class="lab91-subpanel">
+        <h3>Throughput vs Concurrency Benchmark</h3>
+        <p class="note">
+          Measures successful reservations/second at 1, 4, 8, and 16 concurrent threads,
+          comparing transactional vs non-transactional (findAndModify) approaches.
+        </p>
+        <div id="lab102BenchmarkChart">
+          <p class="empty">Run the demo to generate the throughput chart.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Threads</th>
+                <th>Mode</th>
+                <th>Successes</th>
+                <th>Time (s)</th>
+                <th>Throughput (op/s)</th>
+              </tr>
+            </thead>
+            <tbody id="lab102BenchmarkTable">
+              <tr><td colspan="5" class="empty">No benchmark data yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Orders list -->
+      <div class="lab91-subpanel">
+        <div class="section-heading">
+          <h3>Recent Orders</h3>
+        </div>
+        <div id="lab102OrderList">
+          <p class="empty">No orders yet.</p>
+        </div>
+      </div>
+    </section>
+
+<section class="panel lab11-panel" id="lab11">
+  <div class="lab11-header">
+    <div>
+      <h2>Lab 11 — MongoDB Sharding</h2>
+      <p>Shard distribution, shard-key analysis and hotspot detection</p>
+    </div>
+    <div class="lab11-actions">
+      <button id="lab11Refresh" type="button">Refresh</button>
+      <button id="lab11Run" type="button">Run Hotspot Experiment</button>
+    </div>
+  </div>
+
+  <p id="lab11Message">Connecting to Lab 11 API...</p>
+
+  <div class="lab11-grid">
+    <div class="lab11-card">
+      <h3>API Status</h3>
+      <p id="lab11ApiStatus">Checking...</p>
+    </div>
+    <div class="lab11-card">
+      <h3>Shard Count</h3>
+      <p id="lab11ShardCount">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>Timestamp Documents</h3>
+      <p id="lab11TimestampTotal">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>Hashed Documents</h3>
+      <p id="lab11HashedTotal">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>Documents Inserted</h3>
+      <p id="lab11Inserted">—</p>
+    </div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Shard Information</h3>
+    <div id="lab11ShardRows">Loading shard information...</div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Shard Key Recommendation</h3>
+    <p id="lab11Recommendation">Loading analysis...</p>
+    <p id="lab11Justification"></p>
+    <div id="lab11AnalysisRows"></div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Shard Distribution</h3>
+    <div id="lab11Distribution"></div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Range Query Comparison</h3>
+    <div id="lab11QueryRows"></div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Experiment Observations</h3>
+    <div id="lab11Observations"></div>
+  </div>
+</section>
+<section class="panel lab11-panel" id="lab12">
+  <div class="lab11-header">
+    <div>
+      <h2>Lab 12 — MongoDB TLS and RBAC</h2>
+      <p>Client certificate authentication and role-based access control</p>
+    </div>
+    <div class="lab11-actions">
+      <button id="lab12Refresh" type="button">Check TLS</button>
+      <button id="lab12Run" type="button">Run RBAC Tests</button>
+    </div>
+  </div>
+
+  <p id="lab12Message">Lab 12 status has not been checked yet.</p>
+
+  <div class="lab11-grid">
+    <div class="lab11-card">
+      <h3>API Status</h3>
+      <p id="lab12ApiStatus">Not checked</p>
+    </div>
+    <div class="lab11-card">
+      <h3>TLS Connection</h3>
+      <p id="lab12TlsStatus">Not checked</p>
+    </div>
+    <div class="lab11-card">
+      <h3>Database</h3>
+      <p id="lab12Database">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>MongoDB Host</h3>
+      <p id="lab12Host">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>TLS Protocol</h3>
+      <p id="lab12TlsProtocol">—</p>
+    </div>
+    <div class="lab11-card">
+      <h3>TLS Cipher</h3>
+      <p id="lab12TlsCipher">—</p>
+    </div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Reader Permissions</h3>
+    <div id="lab12ReaderResults">Run the RBAC tests to load results.</div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Writer Permissions</h3>
+    <div id="lab12WriterResults">Run the RBAC tests to load results.</div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>Analyst Permissions</h3>
+    <div id="lab12AnalystResults">Run the RBAC tests to load results.</div>
+  </div>
+
+  <div class="lab11-card">
+    <h3>HR Permissions</h3>
+    <div id="lab12HrResults">Run the RBAC tests to load results.</div>
+  </div>
+</section>
+<section class="panel lab-notes">
+      <p class="eyebrow">SCHEMA DESIGN</p><h2>Embed what is read together. Reference what is shared.</h2>
+      <div class="design-grid">
+        <div><span class="design-icon">â†³</span><h3>Embedded</h3><p>Small classification metadata sits inside each threat document, making common detail reads simpler.</p></div>
+        <div><span class="design-icon">âŒ</span><h3>Referenced</h3><p>Publisher metadata and report relationships use identifiers to avoid duplicated shared records and unbounded arrays.</p></div>
+        <div><span class="design-icon">16 MB</span><h3>BSON guardrail</h3><p>Schema analysis measures actual document size. A warning threshold of 15 MiB leaves headroom below MongoDBâ€™s 16 MiB limit.</p></div>
+      </div>
+    </section>
+    <footer>Educational project Â· Data attribution preserved Â· Performance fixtures are synthetic and separate from real threat records.</footer>
+  </main>
+  <dialog id="detailDialog"><button id="closeDialog" class="dialog-close">Close âœ•</button><div id="detailContent"></div></dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,783 @@
+{
+  "lab": "10.2",
+  "title": "Inventory Reservation with Deadlock Handling",
+  "timestamp": "2026-11-19T12:04:43.543398+00:00",
+  "concurrency_test": {
+    "threads": 8,
+    "initial_stock": 5,
+    "rounds": {
+      "WITHOUT retry logic": {
+        "outcomes": {
+          "write_conflict_failed": 6,
+          "success": 2
+        },
+        "attempts_per_success": [
+          1,
+          1
+        ],
+        "final_stock": 3,
+        "orders_created": 2,
+        "consistent": true
+      },
+      "WITH retry logic": {
+        "outcomes": {
+          "out_of_stock": 3,
+          "success": 5
+        },
+        "attempts_per_success": [
+          1,
+          2,
+          3,
+          3,
+          4
+        ],
+        "final_stock": 0,
+        "orders_created": 5,
+        "consistent": true
+      }
+    }
+  },
+  "inconsistency_demo": {
+    "non_transactional": {
+      "stock": 2,
+      "orders": 0,
+      "units_lost": 3,
+      "consistent": false,
+      "description": "stock=2, orders=0 \u2192 3 units decremented but no orders exist"
+    },
+    "transactional": {
+      "stock": 5,
+      "orders": 0,
+      "units_lost": 0,
+      "consistent": true,
+      "description": "stock=5, orders=0 \u2192 fully consistent, transaction rolled back"
+    }
+  },
+  "throughput_benchmark": [
+    {
+      "threads": 1,
+      "mode": "transaction",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.686,
+      "throughput_per_sec": 72.9
+    },
+    {
+      "threads": 1,
+      "mode": "findAndModify",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.302,
+      "throughput_per_sec": 165.6
+    },
+    {
+      "threads": 4,
+      "mode": "transaction",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.869,
+      "throughput_per_sec": 57.6
+    },
+    {
+      "threads": 4,
+      "mode": "findAndModify",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.139,
+      "throughput_per_sec": 360.3
+    },
+    {
+      "threads": 8,
+      "mode": "transaction",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 1.017,
+      "throughput_per_sec": 49.1
+    },
+    {
+      "threads": 8,
+      "mode": "findAndModify",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.081,
+      "throughput_per_sec": 615.6
+    },
+    {
+      "threads": 16,
+      "mode": "transaction",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 1.521,
+      "throughput_per_sec": 32.9
+    },
+    {
+      "threads": 16,
+      "mode": "findAndModify",
+      "successes": 50,
+      "total_requests": 50,
+      "seconds": 0.094,
+      "throughput_per_sec": 531.2
+    }
+  ],
+  "inventory_state": {
+    "product": {
+      "product_id": "P100",
+      "name": "Wireless Mouse",
+      "stock": 0,
+      "version": 50
+    },
+    "orders": [
+      {
+        "order_id": "02db2557-4a4f-4a82-9a4b-6239286494af",
+        "customer_id": "cust-14",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "04115a45-85d4-4885-b215-b9c52c25279e",
+        "customer_id": "cust-21",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "04299e7a-d107-4cbd-8770-02a8e23859be",
+        "customer_id": "cust-44",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "16dd6d7c-16d2-4056-8fd7-86fed3ef3edf",
+        "customer_id": "cust-20",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "17ee0127-af01-4daf-8063-db4f449fcb3f",
+        "customer_id": "cust-40",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "17fddf24-9947-41ee-8c48-25fb4c9da96f",
+        "customer_id": "cust-36",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "1843e461-5ecc-42d7-902c-d80dc45fc9cb",
+        "customer_id": "cust-19",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "19ee3ed6-c1ea-4b9b-a8e4-ea6ea3beec5b",
+        "customer_id": "cust-41",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "223a8511-2160-4cc9-9ff4-de6d55222ed6",
+        "customer_id": "cust-15",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "22619b5e-29fd-4e8c-abd2-61185e098f9d",
+        "customer_id": "cust-2",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "276119e8-4079-4a9c-888d-4ca03bf5f63b",
+        "customer_id": "cust-37",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "2c8e45c7-7b77-4490-b456-7c118a53c56a",
+        "customer_id": "cust-1",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "334a18e6-f101-4d4b-992b-0dde0b22e259",
+        "customer_id": "cust-35",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "37c47915-5564-4d39-82be-0e945e9607c6",
+        "customer_id": "cust-9",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "4a6b2ac1-3628-4d64-aab4-ea4222ad905c",
+        "customer_id": "cust-0",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "50e60286-72a2-486e-a75d-ec675e72ad2d",
+        "customer_id": "cust-30",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "527cda38-09be-42a5-88a5-32688e07e2c8",
+        "customer_id": "cust-48",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "541bbbdf-2ee2-48b1-bda0-fbd3e01d332d",
+        "customer_id": "cust-39",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "5e7ced20-4858-4ead-986f-2b811db199d1",
+        "customer_id": "cust-47",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "5f5d0d0f-033d-4f7e-ad9d-b02e0d982315",
+        "customer_id": "cust-38",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "6462fecf-1652-4b7c-ad5e-6dd9c3bf9722",
+        "customer_id": "cust-13",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "66368daa-3df5-4c69-a56f-ff0b5566f634",
+        "customer_id": "cust-43",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "6811665e-c052-4265-b2ff-062d4a3d0bb7",
+        "customer_id": "cust-8",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "6bc44f17-54b8-486d-bb80-755976655838",
+        "customer_id": "cust-26",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "6dac6ef3-50f3-4b9e-9c3e-aff3bc361c17",
+        "customer_id": "cust-33",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "74ab308d-136c-41f0-b470-b654290b44a4",
+        "customer_id": "cust-42",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "7b8a141c-0f05-4c1f-8083-fb8163577b4a",
+        "customer_id": "cust-27",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "876f6f3a-7385-483c-9c1c-f82ed767d1b0",
+        "customer_id": "cust-12",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "8cf52bbe-a831-4d6c-9fd1-3ad8706cc658",
+        "customer_id": "cust-29",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "93e92353-cfb2-4fb5-b111-d9efb97957c7",
+        "customer_id": "cust-28",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "95e6d88e-ebeb-410f-9382-68e1f005024f",
+        "customer_id": "cust-32",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "986c42a8-0943-4458-a4e3-1f1c9c4827d4",
+        "customer_id": "cust-16",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "9dfd317f-590e-4e5a-883d-7fd9b6b0bf8f",
+        "customer_id": "cust-4",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "a89326a3-e4d2-42c7-8180-6133de021ba7",
+        "customer_id": "cust-6",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "aae133c2-e176-478b-a1a8-55ac9963c1ff",
+        "customer_id": "cust-18",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "b117ffd8-bdb1-46bb-ae42-0f2906536c8d",
+        "customer_id": "cust-17",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "b23f4e47-68f6-4f3b-8d4a-ea9ca7177cc7",
+        "customer_id": "cust-45",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "b263af47-7574-43d1-88e1-07c6e6bff90f",
+        "customer_id": "cust-46",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "b4a0e981-f858-4d27-b88a-466704f4cce9",
+        "customer_id": "cust-7",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "bc90e8ef-ca50-4aac-bca7-07055bbde3c6",
+        "customer_id": "cust-31",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "befc9d0a-84a4-428f-88ee-2cc90fe9bb31",
+        "customer_id": "cust-34",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "c3177c18-1c1b-4a6b-b8d0-427b20fda9ed",
+        "customer_id": "cust-5",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "c349cdb1-0e85-4ec2-8f95-f4f4d60dac31",
+        "customer_id": "cust-23",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "c8062e8a-5e60-4491-8c1b-246a96c076ce",
+        "customer_id": "cust-24",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "d2023d02-4480-4f5b-875d-483bfced94c4",
+        "customer_id": "cust-25",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "e266d988-a3de-4af3-ad6d-ccc0ffc616e1",
+        "customer_id": "cust-11",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "eb02fba8-ade3-467c-874f-5d4e228c82b1",
+        "customer_id": "cust-49",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "edc6dbfe-e980-4eb4-b7df-f2293b17d378",
+        "customer_id": "cust-10",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "ee001a5e-1b2b-4832-94c6-38d3c12c1e65",
+        "customer_id": "cust-3",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      },
+      {
+        "order_id": "f216cb1e-d465-4e37-b399-489d90fbcf6c",
+        "customer_id": "cust-22",
+        "items": [
+          {
+            "product_id": "P100",
+            "qty": 1,
+            "price": 19.99
+          }
+        ],
+        "status": "pending",
+        "total": 19.99
+      }
+    ],
+    "order_count": 50
+  }
+}

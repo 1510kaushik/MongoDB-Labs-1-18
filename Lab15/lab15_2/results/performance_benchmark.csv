@@ -1,0 +1,7 @@
+operation,iterations,average_ms,median_ms,minimum_ms,maximum_ms
+Document-level: list tenant tasks,100,3.2563,2.8655,2.0695,12.8049
+Collection-per-tenant: list tenant tasks,100,2.8675,2.7592,2.0468,5.6751
+Document-level: create task,100,3.2982,2.8666,2.2254,10.1847
+Collection-per-tenant: create task,100,3.1991,2.9745,2.0796,8.1295
+Document-level: cross-tenant analytics,50,3.4222,3.3413,2.8501,4.8973
+Collection-per-tenant: cross-tenant analytics,50,11.6502,11.2493,9.1902,23.823

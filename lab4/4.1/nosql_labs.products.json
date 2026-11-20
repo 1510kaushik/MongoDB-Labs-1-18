@@ -1,0 +1,124 @@
+[{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6892"
+  },
+  "name": "Wireless Headphones",
+  "price": 49.99,
+  "stock": 25,
+  "tags": [
+    "electronics",
+    "wireless"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6893"
+  },
+  "name": "Bluetooth Speaker",
+  "price": 35.5,
+  "stock": 15,
+  "tags": [
+    "electronics",
+    "wireless"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6894"
+  },
+  "name": "Premium Smartwatch",
+  "price": 149.99,
+  "stock": 10,
+  "tags": [
+    "premium",
+    "electronics",
+    "wireless"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6895"
+  },
+  "name": "Gaming Mouse",
+  "price": 29.99,
+  "stock": 0,
+  "tags": [
+    "electronics",
+    "gaming"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6896"
+  },
+  "name": "Mechanical Keyboard",
+  "price": 79.99,
+  "stock": 20,
+  "tags": [
+    "electronics",
+    "wireless",
+    "gaming"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6897"
+  },
+  "name": "USB Cable",
+  "price": 12.99,
+  "stock": 50,
+  "tags": [
+    "electronics",
+    "accessory"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6898"
+  },
+  "name": "Premium Laptop",
+  "price": 999.99,
+  "stock": 5,
+  "tags": [
+    "premium",
+    "electronics",
+    "wireless"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d6899"
+  },
+  "name": "Wireless Charger",
+  "price": 24.99,
+  "stock": 30,
+  "tags": [
+    "electronics",
+    "wireless"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d689a"
+  },
+  "name": "Smart TV",
+  "price": 599.99,
+  "stock": 0,
+  "tags": [
+    "electronics",
+    "entertainment",
+    "premium"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6aa0e5b958417c9c902d689b"
+  },
+  "name": "Webcam",
+  "price": 45,
+  "stock": 18,
+  "tags": [
+    "electronics",
+    "camera"
+  ]
+}]

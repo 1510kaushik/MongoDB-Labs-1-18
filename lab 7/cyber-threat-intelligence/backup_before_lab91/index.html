@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cyber Threat Intelligence | MongoDB Labs</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brandmark">CTI<span>.</span></div>
+    <div><strong>Cyber Threat Intelligence</strong><small>MongoDB Labs 7.1 &amp; 7.2</small></div>
+    <div id="connection" class="status">Checking database…</div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">THREAT LANDSCAPE / LIVE DATA</p>
+        <h1>Understand the threat.<br><span>Follow the evidence.</span></h1>
+        <p class="hero-copy">Search real CISA Known Exploited Vulnerabilities and explore source-attributed security reports. Classification labels preserve source provenance.</p>
+        <div class="actions">
+          <button id="syncCisa">Sync CISA data</button>
+          <button id="syncReports" class="secondary">Discover reports</button>
+        </div>
+        <p id="syncMessage" class="message" aria-live="polite"></p>
+      </div>
+      <div class="hero-orbit" aria-hidden="true"><div class="orbit orbit1"></div><div class="orbit orbit2"></div><div class="orbit-core">CVE</div></div>
+    </section>
+    <section class="stats">
+      <article class="stat"><span>Threat records</span><strong id="threatCount">—</strong><small>Imported from CISA KEV</small></article>
+      <article class="stat"><span>Report links</span><strong id="reportCount">—</strong><small>Curated index links</small></article>
+      <article class="stat"><span>Schema analysis</span><strong id="schemaStatus">Not run</strong><small>Measured BSON document sizes</small></article>
+      <article class="stat"><span>Cache samples</span><strong id="cacheCount">—</strong><small>WiredTiger monitor</small></article>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">INTELLIGENCE SEARCH</p><h2>Threat explorer</h2></div><span class="tag">Source-attributed</span></div>
+      <form id="searchForm" class="search-row">
+        <input id="searchInput" placeholder="Search CVE, vendor, product or description…" aria-label="Search threats">
+        <select id="categoryFilter" aria-label="Classification">
+          <option value="">All classifications</option>
+          <option value="Known Exploited Vulnerability">Known exploited vulnerabilities</option>
+        </select>
+        <button type="submit">Search</button>
+      </form>
+      <div class="table-wrap"><table><thead><tr><th>CVE / Title</th><th>Vendor / Product</th><th>Added</th><th>Classification</th><th>Source</th></tr></thead><tbody id="threatRows"><tr><td colspan="5" class="empty">Loading threats…</td></tr></tbody></table></div>
+      <div class="pagination"><span id="resultCount">0 results</span><div><button id="prevPage" class="secondary" disabled>Previous</button><button id="nextPage" class="secondary" disabled>Next</button></div></div>
+    </section>
+    <section class="two-col">
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">DISCOVERY</p><h2>Annual security reports</h2></div></div>
+        <form id="reportSearchForm" class="search-row"><input id="reportSearchInput" placeholder="Search report title or URL"><button type="submit">Search</button></form>
+        <div id="reportList" class="report-list"><p class="empty">Loading report links…</p></div>
+        <p class="note">Report metadata is discovered from a public index. Confirm title and date at the original publisher.</p>
+      </article>
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 7.1 / 7.2</p><h2>Database observability</h2></div></div>
+        <div class="metric-line"><span>Average BSON size</span><strong id="avgBson">Not measured</strong></div>
+        <div class="metric-line"><span>Largest BSON document</span><strong id="maxBson">Not measured</strong></div>
+        <div class="metric-line"><span>Documents ≥ 15 MiB</span><strong id="nearLimit">Not measured</strong></div>
+        <div class="metric-line"><span>Latest cache utilization</span><strong id="cacheUtil">Not measured</strong></div>
+        <button id="refreshMetrics" class="secondary full">Refresh measurements</button>
+        <p class="note">Run the schema analysis and cache monitor scripts on your MongoDB instance to populate these measurements.</p>
+      </article>
+    </section>
+    <section class="two-col">
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 7.1 / MEASURED DATA</p><h2>Embedding vs referencing</h2></div><span class="tag" id="lab71Status">Checking…</span></div>
+        <div class="metric-line"><span>Embedded documents</span><strong id="embeddedCount">—</strong></div>
+        <div class="metric-line"><span>Average embedded BSON</span><strong id="embeddedAvg">—</strong></div>
+        <div class="metric-line"><span>Referenced documents</span><strong id="referencedCount">—</strong></div>
+        <div class="metric-line"><span>Average referenced BSON</span><strong id="referencedAvg">—</strong></div>
+        <div class="metric-line"><span>Average document-size reduction</span><strong id="sizeReduction">—</strong></div>
+        <div class="metric-line"><span>Reference integrity (valid / missing)</span><strong id="referenceIntegrity">—</strong></div>
+        <p class="note" id="lab71Note">Measurements are calculated from the Lab 7.1 collections when available.</p>
+      </article>
+      <article class="panel">
+        <div class="section-heading"><div><p class="eyebrow">LAB 8 / LIVE STATUS</p><h2>Replica-set health</h2></div><span class="tag" id="replicaSetName">Checking…</span></div>
+        <div class="metric-line"><span>Current primary</span><strong id="replicaPrimary">—</strong></div>
+        <div id="replicaMembers"><p class="empty">Loading replica-set members…</p></div>
+        <p class="note" id="replicaNote">Live status from MongoDB replSetGetStatus. This does not represent historical failover events.</p>
+      </article>
+    </section>
+    <section class="panel lab-notes">
+      <p class="eyebrow">SCHEMA DESIGN</p><h2>Embed what is read together. Reference what is shared.</h2>
+      <div class="design-grid">
+        <div><span class="design-icon">↳</span><h3>Embedded</h3><p>Small classification metadata sits inside each threat document, making common detail reads simpler.</p></div>
+        <div><span class="design-icon">⌁</span><h3>Referenced</h3><p>Publisher metadata and report relationships use identifiers to avoid duplicated shared records and unbounded arrays.</p></div>
+        <div><span class="design-icon">16 MB</span><h3>BSON guardrail</h3><p>Schema analysis measures actual document size. A warning threshold of 15 MiB leaves headroom below MongoDB’s 16 MiB limit.</p></div>
+      </div>
+    </section>
+    <footer>Educational project · Data attribution preserved · Performance fixtures are synthetic and separate from real threat records.</footer>
+  </main>
+  <dialog id="detailDialog"><button id="closeDialog" class="dialog-close">Close ✕</button><div id="detailContent"></div></dialog>
+  <script src="/static/app.js"></script>
+</body>
+</html>
