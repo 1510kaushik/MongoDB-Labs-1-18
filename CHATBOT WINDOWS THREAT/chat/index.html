@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Windows Threat Chat</title><link rel="stylesheet" href="../assets/site.css"><style>textarea{width:100%;padding:12px;font:inherit;border:1px solid #8fa89a;border-radius:8px}button{cursor:pointer;border:1px solid #829e91}button:disabled{opacity:.55}#messages p{white-space:pre-wrap}li{margin-bottom:12px}</style></head>
+<body><header class="top"><div class="shell"><span class="brand">Windows Threat Chat</span></div></header>
+<section class="hero"><div class="shell"><h1>Windows Threat Chat</h1><p>Check this laptop’s security signals and ask Ollama what to investigate and how to respond.</p></div></section><main class="shell main">
+<section class="panel"><h2>Device assessment</h2><p>Checks Defender, firewall profiles, installed hotfix history, and the last seven days of selected Defender events.</p><button id="scan" class="button">Assess this laptop</button><p id="status" role="status"></p><div id="results"></div></section>
+<section class="panel"><h2>Ask about your findings</h2><div id="messages" role="log" aria-live="polite"></div><form id="ask"><label for="question">Question</label><textarea id="question" maxlength="1500" rows="3" placeholder="What should I investigate first?" required></textarea><button id="send" class="button">Send</button></form></section>
+<section class="panel"><h2>Setup</h2><p><a href="../README.md">Read the startup instructions</a></p></section>
+</main><script>
+const el = id => document.getElementById(id);
+const history = [];
+async function request(route, payload) {
+  if (location.protocol === "file:") throw Error("Start the host server, then open http://127.0.0.1:8765/chat/.");
+  const response = await fetch("api/" + route, {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+  });
+  const data = await response.json();
+  if (!response.ok) throw Error(data.error || "Request failed.");
+  return data;
+}
+function append(name, content) {
+  const p = document.createElement("p");
+  const label = document.createElement("strong");
+  label.textContent = name + " ";
+  p.append(label, content);
+  el("messages").append(p);
+}
+el("scan").onclick = async () => {
+  el("scan").disabled = true;
+  el("status").textContent = "Reading Windows security signals…";
+  try {
+    const data = await request("assess",{});
+    el("status").textContent = data.status + (data.time ? " · " + new Date(data.time).toLocaleString() : "");
+    const list = document.createElement("ul");
+    for (const item of data.findings) {
+      const row = document.createElement("li");
+      const title = document.createElement("strong");
+      title.textContent = item.state + " · " + item.title;
+      row.append(title, document.createElement("br"), item.evidence + " " + item.action);
+
+      list.append(row);
+    }
+    el("results").replaceChildren(list);
+  } catch(error) { el("status").textContent = error.message; }
+  finally { el("scan").disabled = false; }
+};
+el("ask").onsubmit = async event => {
+  event.preventDefault();
+  const question=el("question").value.trim();
+  if (!question) return;
+  el("question").value = "";
+  el("send").disabled = true;
+  append("You",question);
+  const wait = document.createElement("p");
+  wait.textContent = "Checking evidence and preparing an answer…";
+  el("messages").append(wait);
+  try {
+    const data=await request("ask",{question,history:history.slice(-6).map(m=>({...m,content:m.content.slice(0,1200)}))});
+    append(data.mode,data.text);
+    history.push({role:"user",content:question},{role:"assistant",content:data.text});
+  } catch(error) { append("Status",error.message); }
+  finally { wait.remove(); el("send").disabled = false; }
+};
+</script></body></html>
